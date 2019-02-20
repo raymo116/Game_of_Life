@@ -2,6 +2,11 @@
 #include <string>
 #include "grid.h"
 
+// ToDo: We have three grids (grid1, grid2, and officialGrid).
+// grid1 and grid two are just so that we have two grids to compare
+// officialGrid is so that we can look at that grid while updating grid1 or grid2
+// behind the scenes without changing official grid
+
 using namespace std;
 
 const char CELL = 'X';
@@ -55,7 +60,7 @@ void grid::printGrid()
     }
     cout << "\n\n" << endl;
 
-    returnSurrounding(-2, -2);
+    returnSurrounding(xSize-1,0);
 }
 
 // I don't know what this is going to be used for, but it seems helpfup for later
@@ -79,12 +84,23 @@ void grid::returnSurrounding(int row, int column)
     // Keep us from having to do the math multiple times for boolean evaluations
     int tempRow=0;
     int tempColumn = 0;
+
+    // The number of neighbors the given item has
+    int neighborCount = 0;
+
     // Goes from one to the right to one to the left
     for (int rowScan = -1; rowScan < 2; ++rowScan)
     {
         // Goes from one to the right to one to the left
         for (int columnScan = -1; columnScan < 2; ++columnScan)
         {
+            // Skips the center so it only evaluates the center's surroundings
+            if((columnScan == 0) && (rowScan == 0))
+            {
+                cout << "E "; // E = the one being evaluated
+                continue;
+            }
+
             tempRow = row+rowScan;
             tempColumn = column+columnScan;
 
@@ -97,12 +113,14 @@ void grid::returnSurrounding(int row, int column)
             else
             {
                 cout << officialGrid[tempRow][tempColumn] << ' ';
+                if(officialGrid[tempRow][tempColumn] == 'X') neighborCount++;
+
             }
 
         }
         cout << endl;
     }
-    cout << endl;
+    cout << endl << neighborCount << endl;
 }
 
 // Checks to make sure that the rows given are valid and won't go outside of the grid
