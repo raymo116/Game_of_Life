@@ -32,6 +32,13 @@ namespace std {
             // 1 = donut
             // 2 = mirror
             int mode;
+
+            void testingSetup();
+            void returnSurrounding(int row, int column);
+
+            // Change bool to char and char to bool
+            bool translate(char currentCell);
+            char translate(bool currentCell);
     };
 }
 #endif
