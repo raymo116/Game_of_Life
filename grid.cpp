@@ -4,6 +4,9 @@
 
 using namespace std;
 
+const char CELL = 'X';
+const char BLANK = '-';
+
 bool **grid1;
 // Variables
 int xSize, ySize;
@@ -18,18 +21,18 @@ grid::grid()
 {
     xSize=ySize = 5;
 
-    grid1 = new bool*[xSize];
-    grid2 = new bool*[xSize];
+    grid1 = new char*[xSize];
+    grid2 = new char*[xSize];
     officialGrid = grid1;
 
     for (int row = 0; row < xSize; ++row)
     {
-        grid1[row] = new bool[ySize];
-        grid2[row] = new bool[ySize];
+        grid1[row] = new char[ySize];
+        grid2[row] = new char[ySize];
 
         for (int column = 0; column < ySize; ++column) {
-            grid1[row][column] = false;
-            grid2[row][column] = false;
+            grid1[row][column] = BLANK;
+            grid2[row][column] = BLANK;
         }
     }
     testingSetup();
@@ -41,61 +44,72 @@ void grid::printGrid()
     {
         for (int column = 0; column < ySize; ++column)
         {
-            switch (officialGrid[row][column])
-            {
-                case true:
-                    cout << 'X';
-                    break;
-                case false:
-                    cout << '-';
-                    break;
-            }
+            cout << officialGrid[row][column];
+
             //ToDo: this will need to be removed before it gets turned in
             cout << ' ';
+            // For testing purposes
             // flipValue(&officialGrid[row][column]);
         }
         cout << '\n';
     }
     cout << "\n\n" << endl;
 
-    returnSurrounding(1, 1);
+    returnSurrounding(-2, -2);
 }
 
 // I don't know what this is going to be used for, but it seems helpfup for later
-void grid::flipValue(bool* currentBool)
+void grid::flipValue(char* currentBool)
 {
-    *currentBool = (*currentBool+1)%2;
+    *currentBool = (*currentBool == CELL) ? BLANK : CELL;
 }
 
 // This method is ust used for testing purposess
 void grid::testingSetup()
 {
     for (int i = 0; i < xSize; ++i) {
-        grid1[i][i] = true;
+        grid1[i][i] = CELL;
     }
 }
 
 void grid::returnSurrounding(int row, int column)
 {
+    checkRCError(row, column);
+
+    // Keep us from having to do the math multiple times for boolean evaluations
+    int tempRow=0;
+    int tempColumn = 0;
     // Goes from one to the right to one to the left
     for (int rowScan = -1; rowScan < 2; ++rowScan)
     {
         // Goes from one to the right to one to the left
         for (int columnScan = -1; columnScan < 2; ++columnScan)
         {
-            cout << translate(officialGrid[row+rowScan][column+columnScan]) << ' ';
+            tempRow = row+rowScan;
+            tempColumn = column+columnScan;
+
+            if(((tempRow < 0) || (tempColumn < 0)) ||
+               ((tempRow >= xSize) || (tempColumn >= ySize)))
+            {
+                // Temp border character
+                cout << "B ";
+            }
+            else
+            {
+                cout << officialGrid[tempRow][tempColumn] << ' ';
+            }
+
         }
         cout << endl;
     }
     cout << endl;
 }
 
-char grid::translate(bool currentCell)
+// Checks to make sure that the rows given are valid and won't go outside of the grid
+void grid::checkRCError(int row, int column)
 {
-    return ((currentCell == false) ? '-' : 'X');
-}
-
-bool grid::translate(char currentCell)
-{
-    return ((currentCell == '-') ? false : true);
+    if(((row >= xSize) || (row < 0)) || (column >= ySize) || (column < 0))
+    {
+        throw invalid_argument(("recieved a index outside of the grid: index "+to_string(row)+","+to_string(column)));
+    }
 }
