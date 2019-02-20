@@ -10,7 +10,7 @@ int main(int argc, char const *argv[]) {
     grid myGrid;
 
     myGrid.printGrid();
-    myGrid.printGrid();
+    //myGrid.printGrid();
 
     return 0;
 }
