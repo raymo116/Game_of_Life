@@ -9,20 +9,23 @@ namespace std {
     class grid
     {
         public:
+            const char CELL = 'X';
+            const char BLANK = '-';
+
             // Will switch these grids back and forth via reference,
             // which is why the names are basically the same
-            bool** grid1;
-            bool** grid2;
+            char** grid1;
+            char** grid2;
 
             // This grid is the one that will be referenced by methods, so it
             // always needs to point to the most recent grid
-            bool** officialGrid;
+            char** officialGrid;
             void printGrid();
 
             // Methods
             grid();
 
-            void flipValue(bool* currentBool);
+            void flipValue(char* currentBool);
         private:
             // Variables
             int xSize;
@@ -36,9 +39,7 @@ namespace std {
             void testingSetup();
             void returnSurrounding(int row, int column);
 
-            // Change bool to char and char to bool
-            bool translate(char currentCell);
-            char translate(bool currentCell);
+            void checkRCError(int row, int column);
     };
 }
 #endif
