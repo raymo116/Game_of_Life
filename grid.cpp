@@ -6,8 +6,7 @@ using namespace std;
 
 bool **grid1;
 // Variables
-int xSize;
-int ySize;
+int xSize, ySize;
 
 // 0 = classic
 // 1 = donut
@@ -33,9 +32,7 @@ grid::grid()
             grid2[row][column] = false;
         }
     }
-
-
-    grid1[0][0] = true;
+    testingSetup();
 }
 
 void grid::printGrid()
@@ -55,15 +52,50 @@ void grid::printGrid()
             }
             //ToDo: this will need to be removed before it gets turned in
             cout << ' ';
-            flipValue(&officialGrid[row][column]);
+            // flipValue(&officialGrid[row][column]);
         }
         cout << '\n';
     }
     cout << "\n\n" << endl;
+
+    returnSurrounding(1, 1);
 }
 
 // I don't know what this is going to be used for, but it seems helpfup for later
 void grid::flipValue(bool* currentBool)
 {
     *currentBool = (*currentBool+1)%2;
+}
+
+// This method is ust used for testing purposess
+void grid::testingSetup()
+{
+    for (int i = 0; i < xSize; ++i) {
+        grid1[i][i] = true;
+    }
+}
+
+void grid::returnSurrounding(int row, int column)
+{
+    // Goes from one to the right to one to the left
+    for (int rowScan = -1; rowScan < 2; ++rowScan)
+    {
+        // Goes from one to the right to one to the left
+        for (int columnScan = -1; columnScan < 2; ++columnScan)
+        {
+            cout << translate(officialGrid[row+rowScan][column+columnScan]) << ' ';
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+char grid::translate(bool currentCell)
+{
+    return ((currentCell == false) ? '-' : 'X');
+}
+
+bool grid::translate(char currentCell)
+{
+    return ((currentCell == '-') ? false : true);
 }
