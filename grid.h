@@ -39,7 +39,7 @@ namespace std {
             void testingSetup();
             void returnSurrounding(int row, int column);
 
-            void checkRCError(int row, int column);
+            void checkRCError(int y, int x);
     };
 }
 #endif
