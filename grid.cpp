@@ -1,14 +1,14 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+
 #include "grid.h"
+#include "gameRules.h"
 
 // ToDo: We have three grids (grid1, grid2, and officialGrid).
 // grid1 and grid two are just so that we have two grids to compare
 // officialGrid is so that we can look at that grid while updating grid1 or grid2
 // behind the scenes without changing official grid
-
-//Grids are referenced Y,X or ROW,COLUMN
 
 using namespace std;
 
@@ -48,6 +48,13 @@ grid::grid()
     testingSetup();
 }
 
+grid::~grid()
+{
+    delete[] grid1;
+    delete[] grid2;
+    delete[] officialGrid;
+}
+
 void grid::printGrid()
 {
     for (int y = 0; y < ySize; ++y)
@@ -65,7 +72,7 @@ void grid::printGrid()
     }
     cout << "\n\n" << endl;
 
-    returnSurrounding(xSize-1,0);
+    gameRules::evaluate(returnSurrounding(0,ySize-1));
 }
 
 // I don't know what this is going to be used for, but it seems helpfup for later
@@ -86,7 +93,7 @@ void grid::testingSetup()
 }
 
 // Fixed te reversed X and Y
-void grid::returnSurrounding(int x, int y)
+int grid::returnSurrounding(int x, int y)
 {
     checkRCError(x, y);
 
@@ -115,18 +122,13 @@ void grid::returnSurrounding(int x, int y)
 
             //Here we switch on the mode for custom behavoir
             switch (mode) {
-                //CLASSIC
-                case 0:
+                case 0: //CLASSIC
                     classicReturn(yTemp, xTemp, &neighborCount);
                     break;
-
-                //DONUT
-                case 1:
+                case 1: //DONUT
                     donutReturn(yTemp, xTemp, &neighborCount);
                     break;
-
-                //MIRROR
-                case 2:
+                case 2: //MIRROR
                     mirrorReturn(yTemp, xTemp, &neighborCount);
                     break;
 
@@ -135,11 +137,11 @@ void grid::returnSurrounding(int x, int y)
         }
         cout << endl;
     }
-    cout << endl << neighborCount << endl;
+    return neighborCount;
 }
 
 // Checks to make sure that the rows given are valid and won't go outside of the grid
-void grid::checkRCError(int y, int x)
+void grid::checkRCError(int x, int y)
 {
     if(((x >= xSize) || (x < 0)) || (y >= ySize) || (y < 0))
     {
@@ -172,14 +174,8 @@ void grid::donutReturn(int x, int y, int* nC)
 
 void grid::mirrorReturn(int x, int y, int* nC)
 {
-    if((x==-1) || (x==xSize))
-    {
-        x = abs(x)-1;
-    }
-    if((y==-1) || (y==ySize))
-    {
-        y = abs(y)-1;
-    }
+    x = ((x==-1) || (x==xSize)) ? abs(x)-1 : x;
+    y = ((y==-1) || (y==ySize)) ? abs(y)-1 : y;
 
     cout << officialGrid[x][y] << ' ';
     if(officialGrid[x][y] == 'X') (*nC)++;
