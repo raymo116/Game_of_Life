@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cmath>
 #include "grid.h"
 
 // ToDo: We have three grids (grid1, grid2, and officialGrid).
@@ -21,7 +22,7 @@ int xSize, ySize;
 // 0 = classic
 // 1 = donut
 // 2 = mirror
-int mode=0;
+int mode;
 
 // Methods
 grid::grid()
@@ -31,6 +32,8 @@ grid::grid()
     grid1 = new char*[ySize];
     grid2 = new char*[ySize];
     officialGrid = grid1;
+
+    mode = 2;
 
     for (int y = 0; y < ySize; ++y)
     {
@@ -85,11 +88,11 @@ void grid::testingSetup()
 // Fixed te reversed X and Y
 void grid::returnSurrounding(int x, int y)
 {
-    checkRCError(y, x);
+    checkRCError(x, y);
 
     // Keep us from having to do the math multiple times for boolean evaluations
-    int yTemp = 0;
     int xTemp = 0;
+    int yTemp = 0;
 
     // The number of neighbors the given item has
     int neighborCount = 0;
@@ -107,75 +110,25 @@ void grid::returnSurrounding(int x, int y)
                 continue;
             }
 
-            yTemp = y + yScan;
             xTemp = x + xScan;
+            yTemp = y + yScan;
 
             //Here we switch on the mode for custom behavoir
             switch (mode) {
                 //CLASSIC
-                case 0: if(((yTemp < 0) || (xTemp < 0)) ||
-                           ((yTemp >= ySize) || (xTemp >= xSize)))
-                        {
-                            // Temp border character
-                            cout << "B ";
-                        }
-                        else
-                        {
-                            cout << officialGrid[yTemp][xTemp] << ' ';
-                            if(officialGrid[yTemp][xTemp] == 'X') neighborCount++;
-                        }
-
-                        break;
+                case 0:
+                    classicReturn(yTemp, xTemp, &neighborCount);
+                    break;
 
                 //DONUT
-                case 1: cout << officialGrid[(yTemp+ySize)%ySize][(xTemp+xSize)%xSize] << ' ';
-                        if(officialGrid[(yTemp+ySize)%ySize][(xTemp+xSize)%xSize] == 'X') neighborCount++;
-
-                        break;
+                case 1:
+                    donutReturn(yTemp, xTemp, &neighborCount);
+                    break;
 
                 //MIRROR
                 case 2:
-                        //There has to be a more elegant solution to the issue of overlaps but for now this works
-                        if((xTemp == -1) || (xTemp == xSize))
-                        {
-                            if((yTemp == -1) || (yTemp == ySize))
-                            {
-                                cout << officialGrid[abs(yTemp)-1][abs(xTemp)-1] << ' ';
-                                if(officialGrid[abs(yTemp)-1][abs(xTemp)-1] == 'X') neighborCount++;
-                                break;
-                            }
-                            else
-                            {
-                                cout << officialGrid[yTemp][abs(xTemp)-1] << ' ';
-                                if(officialGrid[yTemp][abs(xTemp)-1] == 'X') neighborCount++;
-                                break;
-                            }
-
-                        }
-
-                        if((yTemp == -1) || (yTemp == ySize))
-                        {
-                            if((xTemp == -1) || (xTemp == xSize))
-                            {
-                                cout << officialGrid[abs(yTemp)-1][abs(xTemp)-1] << ' ';
-                                if(officialGrid[abs(yTemp)-1][abs(xTemp)-1] == 'X') neighborCount++;
-                                break;
-                            }
-                            else
-                            {
-                                cout << officialGrid[abs(yTemp)-1][xTemp] << ' ';
-                                if(officialGrid[abs(yTemp)-1][xTemp] == 'X') neighborCount++;
-                                break;
-                            }
-
-                        }
-
-                        else
-                        {
-                            cout << officialGrid[yTemp][xTemp] << ' ';
-                            if(officialGrid[yTemp][xTemp] == 'X') neighborCount++;
-                        }
-                        break;
+                    mirrorReturn(yTemp, xTemp, &neighborCount);
+                    break;
 
             }
 
@@ -192,4 +145,42 @@ void grid::checkRCError(int y, int x)
     {
         throw invalid_argument(("recieved a index outside of the grid: index "+to_string(y)+","+to_string(x)));
     }
+}
+
+void grid::classicReturn(int x, int y, int* nC)
+{
+    if(((x < 0) || (y < 0)) || ((x >= ySize) || (y >= xSize)))
+    {
+        // Temp border character
+        cout << "B ";
+    }
+    else
+    {
+        cout << officialGrid[x][y] << ' ';
+        if(officialGrid[x][y] == 'X') (*nC)++;
+    }
+}
+
+void grid::donutReturn(int x, int y, int* nC)
+{
+    x = (x+xSize)%xSize;
+    y = (y+ySize)%ySize;
+
+    cout << officialGrid[x][y] << ' ';
+    if(officialGrid[x][y] == 'X') (*nC)++;
+}
+
+void grid::mirrorReturn(int x, int y, int* nC)
+{
+    if((x==-1) || (x==xSize))
+    {
+        x = abs(x)-1;
+    }
+    if((y==-1) || (y==ySize))
+    {
+        y = abs(y)-1;
+    }
+
+    cout << officialGrid[x][y] << ' ';
+    if(officialGrid[x][y] == 'X') (*nC)++;
 }
