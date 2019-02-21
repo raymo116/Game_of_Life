@@ -1,6 +1,7 @@
 #ifndef MC_GRID
 #include <iostream>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -40,6 +41,10 @@ namespace std {
             void returnSurrounding(int row, int column);
 
             void checkRCError(int y, int x);
+
+            void classicReturn(int x, int y, int* nC);
+            void donutReturn(int x, int y, int* nC);
+            void mirrorReturn(int x, int y, int* nC);
     };
 }
 #endif
