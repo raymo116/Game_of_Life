@@ -6,7 +6,6 @@
 using namespace std;
 
 namespace std {
-    // enum Days { Saturday,Sunday,Tuesday,Wednesday,Thursday,Friday};
     class grid
     {
         public:
@@ -25,6 +24,7 @@ namespace std {
 
             // Methods
             grid();
+            ~grid();
 
             void flipValue(char* currentBool);
         private:
@@ -38,7 +38,7 @@ namespace std {
             int mode;
 
             void testingSetup();
-            void returnSurrounding(int row, int column);
+            int returnSurrounding(int row, int column);
 
             void checkRCError(int y, int x);
 
