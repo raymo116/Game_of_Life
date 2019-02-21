@@ -21,13 +21,12 @@ int xSize, ySize;
 // 0 = classic
 // 1 = donut
 // 2 = mirror
-int mode;
+int mode=0;
 
 // Methods
 grid::grid()
 {
     xSize = ySize = 5;
-    mode = 2;
 
     grid1 = new char*[ySize];
     grid2 = new char*[ySize];
@@ -63,9 +62,7 @@ void grid::printGrid()
     }
     cout << "\n\n" << endl;
 
-    returnSurrounding(0,xSize-1);
-    returnSurrounding(ySize-1,0);
-    returnSurrounding(3,3);
+    returnSurrounding(xSize-1,0);
 }
 
 // I don't know what this is going to be used for, but it seems helpfup for later
@@ -85,89 +82,89 @@ void grid::testingSetup()
     grid1[ySize-2][0] = CELL;
 }
 
-//In this method X and Y are reversed, you can go in and flip all of them if you like
-void grid::returnSurrounding(int ROW, int COLUMN)
+// Fixed te reversed X and Y
+void grid::returnSurrounding(int x, int y)
 {
-    checkRCError(ROW, COLUMN);
+    checkRCError(y, x);
 
     // Keep us from having to do the math multiple times for boolean evaluations
-    int tempX = 0;
-    int tempY = 0;
+    int yTemp = 0;
+    int xTemp = 0;
 
     // The number of neighbors the given item has
     int neighborCount = 0;
 
     // Goes from one to the right to one to the left
-    for (int XScan = -1; XScan < 2; ++XScan)
+    for (int yScan = -1; yScan < 2; ++yScan)
     {
         // Goes from one up to one down
-        for (int YScan = -1; YScan < 2; ++YScan)
+        for (int xScan = -1; xScan < 2; ++xScan)
         {
             // Skips the center so it only evaluates the center's surroundings
-            if((YScan == 0) && (XScan == 0))
+            if((xScan == 0) && (yScan == 0))
             {
                 cout << "E "; // E = the one being evaluated
                 continue;
             }
 
-            tempX = ROW + XScan;
-            tempY = COLUMN + YScan;
+            yTemp = y + yScan;
+            xTemp = x + xScan;
 
             //Here we switch on the mode for custom behavoir
             switch (mode) {
                 //CLASSIC
-                case 0: if(((tempX < 0) || (tempY < 0)) ||
-                           ((tempX >= xSize) || (tempY >= ySize)))
+                case 0: if(((yTemp < 0) || (xTemp < 0)) ||
+                           ((yTemp >= ySize) || (xTemp >= xSize)))
                         {
                             // Temp border character
                             cout << "B ";
                         }
                         else
                         {
-                            cout << officialGrid[tempX][tempY] << ' ';
-                            if(officialGrid[tempX][tempY] == 'X') neighborCount++;
+                            cout << officialGrid[yTemp][xTemp] << ' ';
+                            if(officialGrid[yTemp][xTemp] == 'X') neighborCount++;
                         }
 
                         break;
 
                 //DONUT
-                case 1: cout << officialGrid[(tempX+xSize)%xSize][(tempY+ySize)%ySize] << ' ';
-                        if(officialGrid[(tempX+xSize)%xSize][(tempY+ySize)%ySize] == 'X') neighborCount++;
+                case 1: cout << officialGrid[(yTemp+ySize)%ySize][(xTemp+xSize)%xSize] << ' ';
+                        if(officialGrid[(yTemp+ySize)%ySize][(xTemp+xSize)%xSize] == 'X') neighborCount++;
 
                         break;
 
                 //MIRROR
                 case 2:
                         //There has to be a more elegant solution to the issue of overlaps but for now this works
-                        if((tempY == -1) || (tempY == ySize))
+                        if((xTemp == -1) || (xTemp == xSize))
                         {
-                            if((tempX == -1) || (tempX == xSize))
+                            if((yTemp == -1) || (yTemp == ySize))
                             {
-                                cout << officialGrid[abs(tempX)-1][abs(tempY)-1] << ' ';
-                                if(officialGrid[abs(tempX)-1][abs(tempY)-1] == 'X') neighborCount++;
+                                cout << officialGrid[abs(yTemp)-1][abs(xTemp)-1] << ' ';
+                                if(officialGrid[abs(yTemp)-1][abs(xTemp)-1] == 'X') neighborCount++;
                                 break;
                             }
                             else
                             {
-                                cout << officialGrid[tempX][abs(tempY)-1] << ' ';
-                                if(officialGrid[tempX][abs(tempY)-1] == 'X') neighborCount++;
+                                cout << officialGrid[yTemp][abs(xTemp)-1] << ' ';
+                                if(officialGrid[yTemp][abs(xTemp)-1] == 'X') neighborCount++;
                                 break;
                             }
 
                         }
 
-                        if((tempX == -1) || (tempX == xSize))
+                        if((yTemp == -1) || (yTemp == ySize))
                         {
-                            if((tempY == -1) || (tempY == ySize))
+                            if((xTemp == -1) || (xTemp == xSize))
                             {
-                                cout << officialGrid[abs(tempX)-1][abs(tempY)-1] << ' ';
-                                if(officialGrid[abs(tempX)-1][abs(tempY)-1] == 'X') neighborCount++;
+                                cout << officialGrid[abs(yTemp)-1][abs(xTemp)-1] << ' ';
+                                if(officialGrid[abs(yTemp)-1][abs(xTemp)-1] == 'X') neighborCount++;
                                 break;
                             }
                             else
                             {
-                                cout << officialGrid[abs(tempX)-1][tempY] << ' ';
-                                if(officialGrid[abs(tempX)-1][tempY] == 'X') neighborCount++;
+                                cout << officialGrid[abs(yTemp)-1][xTemp] << ' ';
+                                if(officialGrid[abs(yTemp)-1][xTemp] == 'X') neighborCount++;
                                 break;
                             }
 
@@ -175,8 +172,8 @@ void grid::returnSurrounding(int ROW, int COLUMN)
 
                         else
                         {
-                            cout << officialGrid[tempX][tempY] << ' ';
-                            if(officialGrid[tempX][tempY] == 'X') neighborCount++;
+                            cout << officialGrid[yTemp][xTemp] << ' ';
+                            if(officialGrid[yTemp][xTemp] == 'X') neighborCount++;
                         }
                         break;
 
