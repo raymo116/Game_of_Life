@@ -29,20 +29,20 @@ grid::grid()
 {
     xSize = ySize = 5;
 
-    grid1 = new char*[ySize];
-    grid2 = new char*[ySize];
+    grid1 = new char*[xSize];
+    grid2 = new char*[xSize];
     officialGrid = grid1;
 
-    mode = 2;
+    mode = 0;
 
-    for (int y = 0; y < ySize; ++y)
+    for (int x = 0; x < xSize; ++x)
     {
-        grid1[y] = new char[xSize];
-        grid2[y] = new char[xSize];
+        grid1[x] = new char[ySize];
+        grid2[x] = new char[ySize];
 
-        for (int x = 0; x < xSize; ++x) {
-            grid1[y][x] = BLANK;
-            grid2[y][x] = BLANK;
+        for (int y = 0; y < ySize; ++y) {
+            grid1[x][y] = BLANK;
+            grid2[x][y] = BLANK;
         }
     }
     testingSetup();
@@ -61,7 +61,7 @@ void grid::printGrid()
     {
         for (int x = 0; x < xSize; ++x)
         {
-            cout << officialGrid[y][x];
+            cout << officialGrid[x][y];
 
             //ToDo: this will need to be removed before it gets turned in
             cout << ' ';
@@ -75,24 +75,18 @@ void grid::printGrid()
     gameRules::evaluate(returnSurrounding(0,ySize-1));
 }
 
-// I don't know what this is going to be used for, but it seems helpfup for later
-void grid::flipValue(char* currentBool)
-{
-    *currentBool = (*currentBool == CELL) ? BLANK : CELL;
-}
-
 // This method is ust used for testing purposess
 void grid::testingSetup()
 {
     for (int i = 0; i < xSize; ++i) {
         grid1[i][i] = CELL;
     }
-    grid1[0][xSize-1] = CELL;
-    grid1[1][xSize-1] = CELL;
-    grid1[ySize-2][0] = CELL;
+    grid1[xSize-1][0] = CELL;
+    grid1[xSize-1][1] = CELL;
+    grid1[0][ySize-2] = CELL;
 }
 
-// Fixed te reversed X and Y
+// Fixed the reversed X and Y
 int grid::returnSurrounding(int x, int y)
 {
     checkRCError(x, y);
@@ -123,13 +117,13 @@ int grid::returnSurrounding(int x, int y)
             //Here we switch on the mode for custom behavoir
             switch (mode) {
                 case 0: //CLASSIC
-                    classicReturn(yTemp, xTemp, &neighborCount);
+                    classicReturn(xTemp, yTemp, &neighborCount);
                     break;
                 case 1: //DONUT
-                    donutReturn(yTemp, xTemp, &neighborCount);
+                    donutReturn(xTemp, yTemp, &neighborCount);
                     break;
                 case 2: //MIRROR
-                    mirrorReturn(yTemp, xTemp, &neighborCount);
+                    mirrorReturn(xTemp, yTemp, &neighborCount);
                     break;
 
             }
