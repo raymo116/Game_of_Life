@@ -26,7 +26,6 @@ namespace std {
             grid();
             ~grid();
 
-            void flipValue(char* currentBool);
         private:
             // Variables
             int xSize;
@@ -40,7 +39,7 @@ namespace std {
             void testingSetup();
             int returnSurrounding(int row, int column);
 
-            void checkRCError(int y, int x);
+            void checkRCError(int x, int y);
 
             void classicReturn(int x, int y, int* nC);
             void donutReturn(int x, int y, int* nC);
