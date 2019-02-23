@@ -1,10 +1,13 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <unistd.h>
+#include <time.h>
 
 #include "grid.h"
 #include "gameRules.h"
 
+//Having X and Y of different sizes does not work right now
 
 using namespace std;
 
@@ -14,7 +17,6 @@ const char BLANK = '-';
 //for storing the address when switching between grids
 //cant be an int since the grids we are working with are already pointers
 char ** addressTemp;
-
 char** currentGen;
 char** nextGen;
 
@@ -26,7 +28,20 @@ int xSize, ySize;
 // 2 = mirror
 int mode;
 
+// 0 = brief pause - user can specify how long
+// 1 = require enter
+// 2 = file output
+int viewMode;
+
+//true will update the console and erase previous
+//  false will print them one after another
+bool animated;
+
 int genNumber;
+
+//wait time in milliseconds
+int waitMs;
+struct timespec ts;
 
 // Methods
 grid::grid()
@@ -39,6 +54,48 @@ grid::grid()
     nextGen = new char*[ySize];
 
     mode = 0;
+    viewMode = 1;
+
+    animated = false;
+
+    waitMs = 200;
+
+    //set our timespec for use in nanosleep
+    ts.tv_sec = waitMs / 1000;
+    ts.tv_nsec = (waitMs % 1000) * 1000000;
+
+    for (int y = 0; y < ySize; ++y)
+    {
+        currentGen[y] = new char[xSize];
+        nextGen[y] = new char[xSize];
+
+        for (int x = 0; x < xSize; ++x) {
+            currentGen[y][x] = BLANK;
+            nextGen[y][x] = BLANK;
+        }
+    }
+
+    testingSetup();
+}
+
+//Takes in size of grid, border mode, view mode, animation on/off
+grid::grid(int size, int border, int view, bool animate)
+{
+    xSize = ySize = size;
+
+    genNumber = 0;
+
+    currentGen = new char*[ySize];
+    nextGen = new char*[ySize];
+
+    mode = border;
+    viewMode = view;
+    animated = animate;
+
+    waitMs = 150;
+
+    ts.tv_sec = waitMs / 1000;
+    ts.tv_nsec = (waitMs % 1000) * 1000000;
 
     for (int y = 0; y < ySize; ++y)
     {
@@ -84,11 +141,44 @@ void grid::run(int times)
         //print
         printGrid();
 
+        switch (viewMode) {
+            case 0: //BRIEF PAUSE
+                nanosleep(&ts, NULL);
+                break;
+            case 1: //ENTER
+                //This is the unicode for the opposite of \n
+                cout << "\033[F";
+
+                cout << "Press enter to advance to the next generation." << endl;
+                cin.get();
+                break;
+            case 2: //FILE
+                //FILE IO GOES HERE
+                break;
+
+        }
     }
 }
 
 void grid::printGrid()
 {
+    if (animated)
+    {
+        //Dont jump back the frist time
+        if (genNumber > 0)
+        {
+            //The plus 4 is for the extra newlines. add the viewmode for
+            //  when the user hits enter
+            for (int y = 0; y < ySize + 4 + viewMode; ++y)
+            {
+                cout << "\033[F";
+            }
+        }
+        else
+        {
+            cout << endl;
+        }
+    }
     cout << "Generation " << genNumber << endl;
     for (int y = 0; y < ySize; ++y)
     {

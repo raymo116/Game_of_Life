@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <unistd.h>
+#include <time.h>
 
 using namespace std;
 
@@ -28,6 +30,8 @@ namespace std {
 
             // Methods
             grid();
+            //Takes in size of grid, border mode, view mode, animation on/off
+            grid(int size, int border, int view, bool animate);
             ~grid();
 
             void flipValue(char* currentBool);
@@ -40,6 +44,19 @@ namespace std {
             // 1 = donut
             // 2 = mirror
             int mode;
+
+            // 0 = brief pause - user can specify how long
+            // 1 = require enter
+            // 2 = file output
+            int viewMode;
+
+            //true will update the console and erase previous
+            //  false will print them one after another
+            bool animated;
+
+            //wait time in milliseconds
+            int waitMs;
+            struct timespec ts;
 
             void testingSetup();
             int returnSurrounding(int row, int column);
