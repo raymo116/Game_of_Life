@@ -8,7 +8,7 @@ namespace std {
     class gameRules
     {
     public:
-        static void evaluate(int neighbors);
+        static char evaluate(int neighbors);
     private:
     };
 }

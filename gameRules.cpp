@@ -6,26 +6,28 @@
 using namespace std;
 
 // Should return whether the spot is blank or not
-void gameRules::evaluate(int neighbors)
+char gameRules::evaluate(int neighbors)
 {
     if(neighbors <= 1)
     {
-        cout << "empty\n";
+        //cout << "empty\n";
+        return '-';
     }
     else if(neighbors == 2)
     {
-        cout << "no difference\n";
+        //cout << "no difference\n";
+        return 'X';
     }
     else if(neighbors == 3)
     {
-        cout << "cell exists\n";
+        //cout << "cell exists\n";
+        return 'X';
     }
     else if(neighbors >= 4)
     {
-        cout << "empty\n";
+        //cout << "empty\n";
+        return '-';
     }
 }
-
-
 
 #endif
