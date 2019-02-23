@@ -12,14 +12,18 @@ namespace std {
             const char CELL = 'X';
             const char BLANK = '-';
 
+            char ** addressTemp;
+
             // Will switch these grids back and forth via reference,
             // which is why the names are basically the same
-            char** grid1;
-            char** grid2;
+            char** currentGen;
+            char** nextGen;
 
-            // This grid is the one that will be referenced by methods, so it
-            // always needs to point to the most recent grid
-            char** officialGrid;
+            int genNumber;
+
+            //will run the game specified ammount of times
+            void run(int times);
+
             void printGrid();
 
             // Methods

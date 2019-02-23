@@ -5,17 +5,19 @@
 #include "grid.h"
 #include "gameRules.h"
 
-// ToDo: We have three grids (grid1, grid2, and officialGrid).
-// grid1 and grid two are just so that we have two grids to compare
-// officialGrid is so that we can look at that grid while updating grid1 or grid2
-// behind the scenes without changing official grid
 
 using namespace std;
 
 const char CELL = 'X';
 const char BLANK = '-';
 
-bool **grid1;
+//for storing the address when switching between grids
+//cant be an int since the grids we are working with are already pointers
+char ** addressTemp;
+
+char** currentGen;
+char** nextGen;
+
 // Variables
 int xSize, ySize;
 
@@ -24,44 +26,75 @@ int xSize, ySize;
 // 2 = mirror
 int mode;
 
+int genNumber;
+
 // Methods
 grid::grid()
 {
     xSize = ySize = 5;
 
-    grid1 = new char*[ySize];
-    grid2 = new char*[ySize];
-    officialGrid = grid1;
+    genNumber = 0;
 
-    mode = 2;
+    currentGen = new char*[ySize];
+    nextGen = new char*[ySize];
+
+    mode = 0;
 
     for (int y = 0; y < ySize; ++y)
     {
-        grid1[y] = new char[xSize];
-        grid2[y] = new char[xSize];
+        currentGen[y] = new char[xSize];
+        nextGen[y] = new char[xSize];
 
         for (int x = 0; x < xSize; ++x) {
-            grid1[y][x] = BLANK;
-            grid2[y][x] = BLANK;
+            currentGen[y][x] = BLANK;
+            nextGen[y][x] = BLANK;
         }
     }
+
     testingSetup();
 }
 
 grid::~grid()
 {
-    delete[] grid1;
-    delete[] grid2;
-    delete[] officialGrid;
+    delete[] currentGen;
+    delete[] nextGen;
+}
+
+//will run the game specified ammount of times
+void grid::run(int times)
+{
+    for (int i = 0; i < times; ++i)
+    {
+        //Evaluate every position
+        for (int y = 0; y < ySize; ++y)
+        {
+            for (int x = 0; x < xSize; ++x)
+            {
+                nextGen[x][y] = gameRules::evaluate(returnSurrounding(y,x));
+            }
+        }
+
+        //make the new grid the current one
+        addressTemp = nextGen;
+        nextGen = currentGen;
+        currentGen = addressTemp;
+
+        genNumber++;
+
+        //print
+        printGrid();
+
+    }
 }
 
 void grid::printGrid()
 {
+    cout << "Generation " << genNumber << endl;
     for (int y = 0; y < ySize; ++y)
     {
         for (int x = 0; x < xSize; ++x)
         {
-            cout << officialGrid[y][x];
+            cout << currentGen[y][x];
 
             //ToDo: this will need to be removed before it gets turned in
             cout << ' ';
@@ -72,7 +105,6 @@ void grid::printGrid()
     }
     cout << "\n\n" << endl;
 
-    gameRules::evaluate(returnSurrounding(0,ySize-1));
 }
 
 // I don't know what this is going to be used for, but it seems helpfup for later
@@ -85,11 +117,12 @@ void grid::flipValue(char* currentBool)
 void grid::testingSetup()
 {
     for (int i = 0; i < xSize; ++i) {
-        grid1[i][i] = CELL;
+        currentGen[i][i] = CELL;
     }
-    grid1[0][xSize-1] = CELL;
-    grid1[1][xSize-1] = CELL;
-    grid1[ySize-2][0] = CELL;
+    currentGen[0][xSize-1] = CELL;
+    currentGen[1][xSize-1] = CELL;
+    currentGen[ySize-2][0] = CELL;
+    printGrid();
 }
 
 // Fixed te reversed X and Y
@@ -113,7 +146,7 @@ int grid::returnSurrounding(int x, int y)
             // Skips the center so it only evaluates the center's surroundings
             if((xScan == 0) && (yScan == 0))
             {
-                cout << "E "; // E = the one being evaluated
+                //cout << "E "; // E = the one being evaluated
                 continue;
             }
 
@@ -135,7 +168,7 @@ int grid::returnSurrounding(int x, int y)
             }
 
         }
-        cout << endl;
+        //cout << endl;
     }
     return neighborCount;
 }
@@ -154,12 +187,12 @@ void grid::classicReturn(int x, int y, int* nC)
     if(((x < 0) || (y < 0)) || ((x >= ySize) || (y >= xSize)))
     {
         // Temp border character
-        cout << "B ";
+        //cout << "B ";
     }
     else
     {
-        cout << officialGrid[x][y] << ' ';
-        if(officialGrid[x][y] == 'X') (*nC)++;
+        //cout << currentGen[x][y] << ' ';
+        if(currentGen[x][y] == 'X') (*nC)++;
     }
 }
 
@@ -168,8 +201,8 @@ void grid::donutReturn(int x, int y, int* nC)
     x = (x+xSize)%xSize;
     y = (y+ySize)%ySize;
 
-    cout << officialGrid[x][y] << ' ';
-    if(officialGrid[x][y] == 'X') (*nC)++;
+    //cout << currentGen[x][y] << ' ';
+    if(currentGen[x][y] == 'X') (*nC)++;
 }
 
 void grid::mirrorReturn(int x, int y, int* nC)
@@ -177,6 +210,6 @@ void grid::mirrorReturn(int x, int y, int* nC)
     x = ((x==-1) || (x==xSize)) ? abs(x)-1 : x;
     y = ((y==-1) || (y==ySize)) ? abs(y)-1 : y;
 
-    cout << officialGrid[x][y] << ' ';
-    if(officialGrid[x][y] == 'X') (*nC)++;
+    //cout << currentGen[x][y] << ' ';
+    if(currentGen[x][y] == 'X') (*nC)++;
 }
