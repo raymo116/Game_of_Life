@@ -30,4 +30,26 @@ char gameRules::evaluate(int neighbors)
     }
 }
 
+bool gameRules::checkSimilarities(char*** a1, char*** a2, int ySize, int xSize)
+{
+    // two so it can skip over big open areas easier
+    for (int y = 0; y < ySize; y+=2)
+    {
+        for (int x = 0; x < xSize; x+=2)
+        {
+            if((*a1)[y][x] != (*a2)[y][x])
+                return false;
+        }
+    }
+    for (int y = 1; y < ySize; y+=2)
+    {
+        for (int x = 1; x < xSize; x+=2)
+        {
+            if((*a1)[y][x] != (*a2)[y][x])
+                return false;
+        }
+    }
+    return true;
+}
+
 #endif
