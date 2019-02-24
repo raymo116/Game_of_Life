@@ -6,6 +6,7 @@
 
 #include "grid.h"
 #include "gameRules.h"
+#include "fileImporter.h"
 
 //Having X and Y of different sizes does not work right now
 
@@ -79,14 +80,13 @@ grid::grid()
 }
 
 //Takes in size of grid, border mode, view mode, animation on/off
-grid::grid(int size, int border, int view, bool animate)
+grid::grid(int border, int view, bool animate)
 {
-    xSize = ySize = size;
-
     genNumber = 0;
 
-    currentGen = new char*[ySize];
-    nextGen = new char*[ySize];
+    string mapContent = "";
+    fileImporter myImporter;
+    myImporter.openFile("test.txt", &currentGen, &nextGen, &xSize, &ySize);
 
     mode = border;
     viewMode = view;
@@ -96,25 +96,14 @@ grid::grid(int size, int border, int view, bool animate)
 
     ts.tv_sec = waitMs / 1000;
     ts.tv_nsec = (waitMs % 1000) * 1000000;
-
-    for (int y = 0; y < ySize; ++y)
-    {
-        currentGen[y] = new char[xSize];
-        nextGen[y] = new char[xSize];
-
-        for (int x = 0; x < xSize; ++x) {
-            currentGen[y][x] = BLANK;
-            nextGen[y][x] = BLANK;
-        }
-    }
-
-    testingSetup();
 }
 
 grid::~grid()
 {
-    delete[] currentGen;
-    delete[] nextGen;
+    if(currentGen)
+        delete[] currentGen;
+    if(nextGen)
+        delete[] nextGen;
 }
 
 //will run the game specified ammount of times
@@ -127,8 +116,11 @@ void grid::run(int times)
         {
             for (int x = 0; x < xSize; ++x)
             {
-                nextGen[x][y] = gameRules::evaluate(returnSurrounding(y,x));
+                // cout << y << "," << x << endl;
+                // cout << nextGen[y][x];
+                nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y));
             }
+            // cout << endl;
         }
 
         //make the new grid the current one
@@ -235,10 +227,7 @@ int grid::returnSurrounding(int x, int y)
         {
             // Skips the center so it only evaluates the center's surroundings
             if((xScan == 0) && (yScan == 0))
-            {
-                //cout << "E "; // E = the one being evaluated
                 continue;
-            }
 
             xTemp = x + xScan;
             yTemp = y + yScan;
@@ -272,9 +261,9 @@ void grid::checkRCError(int x, int y)
     }
 }
 
-void grid::classicReturn(int x, int y, int* nC)
+void grid::classicReturn(int y, int x, int* nC)
 {
-    if(((x < 0) || (y < 0)) || ((x >= ySize) || (y >= xSize)))
+    if(((x < 0) || (y < 0)) || ((x >= xSize) || (y >= ySize)))
     {
         // Temp border character
         //cout << "B ";
@@ -282,24 +271,21 @@ void grid::classicReturn(int x, int y, int* nC)
     else
     {
         //cout << currentGen[x][y] << ' ';
-        if(currentGen[x][y] == 'X') (*nC)++;
+        if(currentGen[y][x] == 'X') (*nC)++;
     }
 }
 
-void grid::donutReturn(int x, int y, int* nC)
+void grid::donutReturn(int y, int x, int* nC)
 {
     x = (x+xSize)%xSize;
     y = (y+ySize)%ySize;
-
-    //cout << currentGen[x][y] << ' ';
-    if(currentGen[x][y] == 'X') (*nC)++;
+    if(currentGen[y][x] == 'X') (*nC)++;
 }
 
-void grid::mirrorReturn(int x, int y, int* nC)
+void grid::mirrorReturn(int y, int x, int* nC)
 {
     x = ((x==-1) || (x==xSize)) ? abs(x)-1 : x;
     y = ((y==-1) || (y==ySize)) ? abs(y)-1 : y;
 
-    //cout << currentGen[x][y] << ' ';
-    if(currentGen[x][y] == 'X') (*nC)++;
+    if(currentGen[y][x] == 'X') (*nC)++;
 }
