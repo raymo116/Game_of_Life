@@ -7,10 +7,10 @@ using namespace std;
 
 int main(int argc, char const *argv[]) {
 
-    //          size, mode, viewMode, animated
-    grid myGrid(20,   2,    0,        true);
+    //          mode, viewMode, animated
+    grid myGrid(0,0,true);
 
-    myGrid.run(20);
+    myGrid.run(100);
 
     return 0;
 }
