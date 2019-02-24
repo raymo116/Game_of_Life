@@ -30,8 +30,8 @@ namespace std {
 
             // Methods
             grid();
-            //Takes in size of grid, border mode, view mode, animation on/off
-            grid(int size, int border, int view, bool animate);
+            //Takes in border mode, view mode, animation on/off
+            grid(int border, int view, bool animate);
             ~grid();
 
             void flipValue(char* currentBool);
