@@ -9,6 +9,7 @@ namespace std {
     {
     public:
         static char evaluate(int neighbors);
+        bool checkSimilarities(char*** a1, char*** a2, int y, int x);
     private:
     };
 }
