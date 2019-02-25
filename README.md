@@ -5,6 +5,9 @@
 ## Work in Progress
 
 
+## Helpful Links
+[GOL Guidelines](https://docs.google.com/document/d/1ETlCuRgBYWztkeeKnOrnh1Ba-9GL5cjct5GPkAp73m0/edit?usp=sharing)
+
 
 
 ## References
@@ -22,3 +25,5 @@
 [Sleeping](https://linux.die.net/man/2/nanosleep)
 
 [Pausing](https://stackoverflow.com/questions/2252372/how-do-you-make-a-program-sleep-in-c-on-win-32)
+
+[Error: free(): invalid next size (fast):](https://stackoverflow.com/questions/4729395/error-free-invalid-next-size-fast)
