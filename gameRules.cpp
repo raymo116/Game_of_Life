@@ -1,52 +1,57 @@
 #ifndef GAME_RULES
 #include <iostream>
 #include <string>
+#include <cmath>
+
 #include "gameRules.h"
 
 using namespace std;
 
 // Should return whether the spot is blank or not
-char gameRules::evaluate(int neighbors)
+char gameRules::evaluate(int neighbors, char currentChar)
 {
-    if(neighbors <= 1)
+
+    // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+    if(neighbors < 2)
     {
-        //cout << "empty\n";
         return '-';
     }
+    // Any live cell with two or three live neighbors lives on to the next generation.
     else if(neighbors == 2)
     {
-        //cout << "no difference\n";
-        return 'X';
+        return currentChar;
     }
+    // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
     else if(neighbors == 3)
     {
-        //cout << "cell exists\n";
         return 'X';
     }
-    else if(neighbors >= 4)
+    // Any live cell with more than three live neighbors dies, as if by overpopulation.
+    else if(neighbors > 3)
     {
-        //cout << "empty\n";
         return '-';
     }
 }
 
 bool gameRules::checkSimilarities(char*** a1, char*** a2, int ySize, int xSize)
 {
-    // two so it can skip over big open areas easier
-    for (int y = 0; y < ySize; y+=2)
+    // multiple so it can skip over big open areas easier
+    int runs = floor(xSize/4);
+
+    // Checks the grid in big swaths so that large open areas don't really
+    // impede the speed at which it evaluates the grid
+    for(int yRun=0; yRun <= runs; ++yRun)
     {
-        for (int x = 0; x < xSize; x+=2)
+        for (int y = yRun; y < ySize; y+=runs)
         {
-            if((*a1)[y][x] != (*a2)[y][x])
-                return false;
-        }
-    }
-    for (int y = 1; y < ySize; y+=2)
-    {
-        for (int x = 1; x < xSize; x+=2)
-        {
-            if((*a1)[y][x] != (*a2)[y][x])
-                return false;
+            for(int xRun=0; xRun <= runs; ++xRun)
+            {
+                for (int x = xRun; x < xSize; x+=runs)
+                {
+                    if((*a1)[y][x] != (*a2)[y][x])
+                        return false;
+                }
+            }
         }
     }
     return true;
