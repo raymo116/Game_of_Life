@@ -59,7 +59,7 @@ grid::grid()
 
     animated = false;
 
-    waitMs = 200;
+    waitMs = 2000;
 
     //set our timespec for use in nanosleep
     ts.tv_sec = waitMs / 1000;
@@ -92,7 +92,7 @@ grid::grid(int border, int view, bool animate)
     viewMode = view;
     animated = animate;
 
-    waitMs = 150;
+    waitMs = 100;
 
     ts.tv_sec = waitMs / 1000;
     ts.tv_nsec = (waitMs % 1000) * 1000000;
@@ -116,11 +116,8 @@ void grid::run(int times)
         {
             for (int x = 0; x < xSize; ++x)
             {
-                // cout << y << "," << x << endl;
-                // cout << nextGen[y][x];
-                nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y));
+                nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
             }
-            // cout << endl;
         }
 
         //make the new grid the current one
@@ -149,6 +146,12 @@ void grid::run(int times)
                 break;
 
         }
+
+        if(gameRules::checkSimilarities(&nextGen, &currentGen, ySize, xSize))
+        {
+            cout << "The simulation has reached a stable point." << endl;
+            break;
+        }
     }
 }
 
@@ -171,7 +174,7 @@ void grid::printGrid()
             cout << endl;
         }
     }
-    cout << "Generation " << genNumber << endl;
+    cout << "Generation " << genNumber << BLANK_SPACE << endl;
     for (int y = 0; y < ySize; ++y)
     {
         for (int x = 0; x < xSize; ++x)
@@ -180,8 +183,6 @@ void grid::printGrid()
 
             //ToDo: this will need to be removed before it gets turned in
             cout << ' ';
-            // For testing purposes
-            // flipValue(&officialGrid[y][x]);
         }
         cout << '\n';
     }
