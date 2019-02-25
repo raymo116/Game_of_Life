@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char const *argv[]) {
 
     //          mode, viewMode, animated
-    grid myGrid(0,0,true);
+    grid myGrid(1,    0,        true);
 
     myGrid.run(100);
 
