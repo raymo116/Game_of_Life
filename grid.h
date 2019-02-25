@@ -54,6 +54,8 @@ namespace std {
             //  false will print them one after another
             bool animated;
 
+            const string BLANK_SPACE = "            ";
+
             //wait time in milliseconds
             int waitMs;
             struct timespec ts;
