@@ -11,9 +11,7 @@ fileImporter::fileImporter(string fP)
     filepath = fP;
 }
 fileImporter::fileImporter()
-{
-
-}
+{}
 
 void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, int* xSize, int* ySize)
 {
@@ -42,6 +40,7 @@ void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, int*
             // cout << y << "," << x << endl;
             myStream.get(character);
             (*currentGen)[y][x] = (*nextGen)[y][x] = check(character);
+            if(character == '\n') x--;
         }
         myStream.get(character);
     }
