@@ -86,7 +86,7 @@ grid::grid(int border, int view, bool animate)
 
     string mapContent = "";
     fileImporter myImporter;
-    myImporter.openFile("test.txt", &currentGen, &nextGen, &xSize, &ySize);
+    myImporter.openFile("GosperGun.txt", &currentGen, &nextGen, &xSize, &ySize);
 
     mode = border;
     viewMode = view;
@@ -117,6 +117,9 @@ void grid::run(int times)
             for (int x = 0; x < xSize; ++x)
             {
                 nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
+
+                if(currentGen[y][x] == '\n')
+                    x--;
             }
         }
 
