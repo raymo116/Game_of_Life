@@ -2,6 +2,7 @@
 #include <string>
 #include <cmath>
 #include <unistd.h>
+#include <fstream>
 #include <time.h>
 
 #include "grid.h"
@@ -96,6 +97,11 @@ grid::grid(int border, int view, bool animate)
 
     ts.tv_sec = waitMs / 1000;
     ts.tv_nsec = (waitMs % 1000) * 1000000;
+
+    if(view == 2)
+    {
+        outputFile.open("testExport.txt"/*outputFilepath*/);
+    }
 }
 
 grid::~grid()
@@ -104,6 +110,10 @@ grid::~grid()
         delete[] currentGen;
     if(nextGen)
         delete[] nextGen;
+    if(outputFile)
+    {
+        outputFile.close();
+    }
 }
 
 //will run the game specified ammount of times
@@ -128,16 +138,13 @@ void grid::run(int times)
         nextGen = currentGen;
         currentGen = addressTemp;
 
-        genNumber++;
-
-        //print
-        printGrid();
-
         switch (viewMode) {
             case 0: //BRIEF PAUSE
                 nanosleep(&ts, NULL);
+                printGrid();
                 break;
             case 1: //ENTER
+                printGrid();
                 //This is the unicode for the opposite of \n
                 cout << "\033[F";
 
@@ -145,10 +152,11 @@ void grid::run(int times)
                 cin.get();
                 break;
             case 2: //FILE
-                //FILE IO GOES HERE
+                printGrid(&outputFile);
                 break;
-
         }
+
+        genNumber++;
 
         if(gameRules::checkSimilarities(&nextGen, &currentGen, ySize, xSize))
         {
@@ -160,6 +168,7 @@ void grid::run(int times)
 
 void grid::printGrid()
 {
+    // ToDo: change this to viewmode 0
     if (animated)
     {
         //Dont jump back the frist time
@@ -177,6 +186,7 @@ void grid::printGrid()
             cout << endl;
         }
     }
+
     cout << "Generation " << genNumber << BLANK_SPACE << endl;
     for (int y = 0; y < ySize; ++y)
     {
@@ -192,6 +202,21 @@ void grid::printGrid()
     cout << "\n\n" << endl;
 
 }
+
+void grid::printGrid(ofstream* myStream)
+{
+    (*myStream) << "Generation " << genNumber << BLANK_SPACE << endl;
+    for (int y = 0; y < ySize; ++y)
+    {
+        for (int x = 0; x < xSize; ++x)
+        {
+            (*myStream) << currentGen[y][x];
+        }
+        (*myStream) << '\n';
+    }
+    (*myStream) << "\n\n" << endl;
+}
+
 
 // I don't know what this is going to be used for, but it seems helpfup for later
 void grid::flipValue(char* currentBool)
@@ -267,14 +292,8 @@ void grid::checkRCError(int x, int y)
 
 void grid::classicReturn(int y, int x, int* nC)
 {
-    if(((x < 0) || (y < 0)) || ((x >= xSize) || (y >= ySize)))
+    if(!(((x < 0) || (y < 0)) || ((x >= xSize) || (y >= ySize))))
     {
-        // Temp border character
-        //cout << "B ";
-    }
-    else
-    {
-        //cout << currentGen[x][y] << ' ';
         if(currentGen[y][x] == 'X') (*nC)++;
     }
 }
@@ -283,6 +302,7 @@ void grid::donutReturn(int y, int x, int* nC)
 {
     x = (x+xSize)%xSize;
     y = (y+ySize)%ySize;
+
     if(currentGen[y][x] == 'X') (*nC)++;
 }
 
