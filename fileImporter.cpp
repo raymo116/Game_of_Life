@@ -15,7 +15,7 @@ fileImporter::fileImporter(string fP)
 fileImporter::fileImporter()
 {}
 
-void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, int* xSize, int* ySize)
+void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random)
 {
     filepath = fP;
 
@@ -25,7 +25,7 @@ void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, int*
     *ySize = parseNum(&myStream);
     *xSize = parseNum(&myStream);
 
-    generalInit(currentGen, nextGen, xSize, ySize);
+    generalInit(currentGen, nextGen, checkGen, xSize, ySize, false);
 
     char character;
 
@@ -43,9 +43,9 @@ void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, int*
     myStream.close();
 }
 
-void fileImporter::generateNew(char*** currentGen, char*** nextGen, int* xSize, int* ySize)
+void fileImporter::generateNew(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize)
 {
-    generalInit(currentGen, nextGen, xSize, ySize);
+    generalInit(currentGen, nextGen, checkGen, xSize, ySize, true);
 
     int density = 0;
     getNumber(&density, "between 0 and 1 for the density of the grid", false);
@@ -81,18 +81,23 @@ int fileImporter::parseNum(ifstream* currentStream)
     return stoi(numString);
 }
 
-void fileImporter::generalInit(char*** currentGen, char*** nextGen, int* xSize, int* ySize)
+void fileImporter::generalInit(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random)
 {
-    getNumber(xSize, "for the X size", true);
-    getNumber(ySize, "for the Y size", true);
+    if(random)
+    {
+        getNumber(xSize, "for the X size", true);
+        getNumber(ySize, "for the Y size", true);
+    }
 
     *currentGen = new char*[*ySize];
     *nextGen = new char*[*ySize];
+    *checkGen = new char*[*ySize];
 
     for (int y = 0; y < (*ySize); ++y)
     {
         (*currentGen)[y] = new char[*xSize];
         (*nextGen)[y] = new char[*xSize];
+        (*checkGen)[y] = new char[*xSize];
     }
 }
 
