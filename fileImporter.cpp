@@ -33,11 +33,11 @@ void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, int*
     }
 
     char character;
+
     for (int y = 0; y < (*ySize); ++y)
     {
         for (int x = 0; x < (*xSize); ++x)
         {
-            // cout << y << "," << x << endl;
             myStream.get(character);
             (*currentGen)[y][x] = (*nextGen)[y][x] = check(character);
             if(character == '\n') x--;
@@ -52,7 +52,7 @@ char fileImporter::check(char character)
 {
     character = toupper(character);
 
-    if((character != '-')&&(character != 'X'))
+    if((character != '-')&&(character != 'X')&& character != '\n')
     {
         throw invalid_argument("There was an unacceptable character entered: " + character);
     }
