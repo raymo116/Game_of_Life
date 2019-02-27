@@ -11,7 +11,7 @@ int main(int argc, char const *argv[]) {
     grid myGrid(1,     // mode
                 1,     // viewMode
                 true,  // animated
-                true); // random
+                false); // random
 
     myGrid.run(1000);
 
