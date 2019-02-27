@@ -15,6 +15,7 @@ using namespace std;
 
 const char CELL = 'X';
 const char BLANK = '-';
+const int DELAY_TIME = 1000;
 
 //for storing the address when switching between grids
 //cant be an int since the grids we are working with are already pointers
@@ -81,22 +82,27 @@ grid::grid()
 }
 
 //Takes in size of grid, border mode, view mode, animation on/off
-grid::grid(int border, int view, bool animate)
+grid::grid(int border, int view, bool animate, bool random)
 {
+    if(!random)
+    {
+        fileImporter myImporter;
+        myImporter.openFile("GosperGun.txt", &currentGen, &nextGen, &xSize, &ySize);
+    }
+    else
+    {
+        fileImporter::generateNew(&currentGen, &nextGen, &xSize, &ySize);
+    }
+
     genNumber = 0;
-
-    string mapContent = "";
-    fileImporter myImporter;
-    myImporter.openFile("GosperGun.txt", &currentGen, &nextGen, &xSize, &ySize);
-
     mode = border;
     viewMode = view;
     animated = animate;
 
     waitMs = 100;
 
-    ts.tv_sec = waitMs / 1000;
-    ts.tv_nsec = (waitMs % 1000) * 1000000;
+    ts.tv_sec = waitMs / DELAY_TIME;
+    ts.tv_nsec = (waitMs % DELAY_TIME) * 1000000;
 
     if(view == 2)
     {
@@ -216,7 +222,6 @@ void grid::printGrid(ofstream* myStream)
     }
     (*myStream) << "\n\n" << endl;
 }
-
 
 // I don't know what this is going to be used for, but it seems helpfup for later
 void grid::flipValue(char* currentBool)
