@@ -7,8 +7,11 @@ using namespace std;
 
 int main(int argc, char const *argv[]) {
 
-    //          mode, viewMode, animated
-    grid myGrid(1,    0,        true);
+
+    grid myGrid(1,     // mode
+                1,     // viewMode
+                true,  // animated
+                true); // random
 
     myGrid.run(1000);
 
