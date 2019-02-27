@@ -127,23 +127,6 @@ void grid::run(int times)
 {
     for (int i = 0; i < times; ++i)
     {
-        //Evaluate every position
-        for (int y = 0; y < ySize; ++y)
-        {
-            for (int x = 0; x < xSize; ++x)
-            {
-                nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
-
-                if(currentGen[y][x] == '\n')
-                    x--;
-            }
-        }
-
-        //make the new grid the current one
-        addressTemp = nextGen;
-        nextGen = currentGen;
-        currentGen = addressTemp;
-
         switch (viewMode) {
             case 0: //BRIEF PAUSE
                 nanosleep(&ts, NULL);
@@ -161,6 +144,23 @@ void grid::run(int times)
                 printGrid(&outputFile);
                 break;
         }
+
+        //Evaluate every position
+        for (int y = 0; y < ySize; ++y)
+        {
+            for (int x = 0; x < xSize; ++x)
+            {
+                nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
+
+                if(currentGen[y][x] == '\n')
+                    x--;
+            }
+        }
+
+        //make the new grid the current one
+        addressTemp = nextGen;
+        nextGen = currentGen;
+        currentGen = addressTemp;
 
         genNumber++;
 
