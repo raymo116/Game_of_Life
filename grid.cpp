@@ -55,6 +55,7 @@ grid::grid()
 
     currentGen = new char*[ySize];
     nextGen = new char*[ySize];
+    checkGen = new char*[ySize];
 
     mode = 0;
     viewMode = 1;
@@ -71,10 +72,12 @@ grid::grid()
     {
         currentGen[y] = new char[xSize];
         nextGen[y] = new char[xSize];
+        checkGen[y] = new char[xSize];
 
         for (int x = 0; x < xSize; ++x) {
             currentGen[y][x] = BLANK;
             nextGen[y][x] = BLANK;
+            checkGen[y][x] = BLANK;
         }
     }
 
@@ -87,11 +90,11 @@ grid::grid(int border, int view, bool animate, bool random)
     if(!random)
     {
         fileImporter myImporter;
-        myImporter.openFile("GosperGun.txt", &currentGen, &nextGen, &xSize, &ySize);
+        myImporter.openFile("GosperGun.txt", &currentGen, &nextGen, &checkGen, &xSize, &ySize, random);
     }
     else
     {
-        fileImporter::generateNew(&currentGen, &nextGen, &xSize, &ySize);
+        fileImporter::generateNew(&currentGen, &nextGen, &checkGen, &xSize, &ySize);
     }
 
     genNumber = 0;
@@ -116,10 +119,10 @@ grid::~grid()
         delete[] currentGen;
     if(nextGen)
         delete[] nextGen;
+    if(checkGen)
+        delete[] checkGen;
     if(outputFile)
-    {
         outputFile.close();
-    }
 }
 
 //will run the game specified ammount of times
@@ -145,6 +148,13 @@ void grid::run(int times)
                 break;
         }
 
+        if(gameRules::checkSimilarities(&checkGen, &currentGen, ySize, xSize))
+        {
+            cout << "The simulation has reached a stable point." << endl;
+            break;
+            // (i%2==0) &&
+        }
+
         //Evaluate every position
         for (int y = 0; y < ySize; ++y)
         {
@@ -152,10 +162,11 @@ void grid::run(int times)
             {
                 nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
 
-                if(currentGen[y][x] == '\n')
-                    x--;
+                if(i%2 == 0)
+                    checkGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
             }
         }
+
 
         //make the new grid the current one
         addressTemp = nextGen;
@@ -163,12 +174,6 @@ void grid::run(int times)
         currentGen = addressTemp;
 
         genNumber++;
-
-        if(gameRules::checkSimilarities(&nextGen, &currentGen, ySize, xSize))
-        {
-            cout << "The simulation has reached a stable point." << endl;
-            break;
-        }
     }
 }
 
