@@ -45,18 +45,15 @@ void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, int*
 
 void fileImporter::generateNew(char*** currentGen, char*** nextGen, int* xSize, int* ySize)
 {
-
     generalInit(currentGen, nextGen, xSize, ySize);
 
     int density = 0;
     getNumber(&density, "between 0 and 1 for the density of the grid", false);
-    cout << density << endl;
 
     for (int y = 0; y < (*ySize); ++y)
     {
         for (int x = 0; x < (*xSize); ++x)
         {
-            // This doesn't seem to work properly when you only give it a 0.01
             (*currentGen)[y][x] = ((rand()%100)<density)?'X':'-';
         }
     }
@@ -103,8 +100,7 @@ void fileImporter::getNumber(int* currentNum, string myParam, bool isInt)
 {
     bool running = true;
     string tempString = "";
-    cout << "Please enter an integer " << myParam << ".\n"
-    << "If you enter negative number, the absolute value will be taken:" << endl;
+    cout << "Please enter an integer " << myParam << "."<< endl;
     while(running)
     {
         try
@@ -112,11 +108,11 @@ void fileImporter::getNumber(int* currentNum, string myParam, bool isInt)
             getline(cin, tempString);
             for (int i = 0; i < tempString.length(); i++)
             {
-                if(((tempString[i] > 57) || (tempString[i] < 48)) && (tempString[i] != '.'))
+                if(((tempString[i] > 57) || (tempString[i] < 48)) && (isInt || (!isInt && (tempString[i] != '.'))))
                     throw invalid_argument("");
             }
 
-            (*currentNum) = abs((isInt) ? stoi(tempString) : round(100*stof(tempString)));
+            (*currentNum) = (isInt) ? stoi(tempString) : round(100*stof(tempString));
 
             if((!isInt)&&((*currentNum >= 100) || (*currentNum == 0)))
                 throw invalid_argument("");
