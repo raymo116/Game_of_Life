@@ -13,45 +13,26 @@ char gameRules::evaluate(int neighbors, char currentChar)
 
     // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
     if(neighbors < 2)
-    {
         return '-';
-    }
     // Any live cell with two or three live neighbors lives on to the next generation.
     else if(neighbors == 2)
-    {
         return currentChar;
-    }
     // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
     else if(neighbors == 3)
-    {
         return 'X';
-    }
     // Any live cell with more than three live neighbors dies, as if by overpopulation.
     else if(neighbors > 3)
-    {
         return '-';
-    }
 }
 
 bool gameRules::checkSimilarities(char*** a1, char*** a2, int ySize, int xSize)
 {
-    // multiple so it can skip over big open areas easier
-    int runs = floor(xSize/4);
-
-    // Checks the grid in big swaths so that large open areas don't really
-    // impede the speed at which it evaluates the grid
-    for(int yRun=0; yRun <= runs; ++yRun)
+    for (int y = 0; y < ySize; ++y)
     {
-        for (int y = yRun; y < ySize; y+=runs)
+        for (int x = 0; x < xSize; ++x)
         {
-            for(int xRun=0; xRun <= runs; ++xRun)
-            {
-                for (int x = xRun; x < xSize; x+=runs)
-                {
-                    if((*a1)[y][x] != (*a2)[y][x])
-                        return false;
-                }
-            }
+            if((*a1)[y][x] != (*a2)[y][x])
+                return false;
         }
     }
     return true;
