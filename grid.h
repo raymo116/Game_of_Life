@@ -21,6 +21,7 @@ namespace std {
             // which is why the names are basically the same
             char** currentGen;
             char** nextGen;
+            char** checkGen;
 
             int genNumber;
 
