@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <fstream>
 #include <unistd.h>
 #include <time.h>
 
@@ -27,6 +28,7 @@ namespace std {
             void run(int times);
 
             void printGrid();
+            void printGrid(ofstream* myStream);
 
             // Methods
             grid();
@@ -68,6 +70,8 @@ namespace std {
             void classicReturn(int x, int y, int* nC);
             void donutReturn(int x, int y, int* nC);
             void mirrorReturn(int x, int y, int* nC);
+            ofstream outputFile;
+            string outputFilepath;
     };
 }
 #endif
