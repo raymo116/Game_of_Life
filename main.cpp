@@ -7,7 +7,6 @@ using namespace std;
 
 void choiceOutline(int* param, string* in, int options);
 
-
 int main(int argc, char const *argv[]) {
     string input = "";
     int mode = 3; // Arbitrary value that won't be used
@@ -26,30 +25,26 @@ int main(int argc, char const *argv[]) {
     choiceOutline(&viewMode, &input, 3);
 
     if(viewMode == 0)
-        fileImporter::getNumber(&delayLength, "for the delay", true);
+        fileImporter::getNumber(&delayLength, "for the delay time in ms", true);
 
-    grid myGrid(mode, viewMode, animated, random);
+    grid myGrid(mode, viewMode, animated, random, delayLength);
 
     myGrid.run(1000);
 
     return 0;
 }
 
-void choiceOutline(int* param, string* in, int options) // Options should be either 2 or 3
+void choiceOutline(int* param, string* in, int options) // There should be only 2 or 3 options
 {
-    while((*param)==3)
+    while((*param)==3) // Arbitrary value that will never be used
     {
         getline(cin, (*in));
         if((*in) == "0")
             (*param) = 0;
         else if((*in) == "1")
-        {
             (*param) = 1;
-        }
         else if((*in) == "2" && (options == 3))
-        {
             (*param) = 2;
-        }
         else
             cout << "That was not a valid input. Please try again:\n";
     }
