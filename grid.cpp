@@ -90,7 +90,7 @@ grid::grid(int border, int view, bool animate, bool random)
     if(!random)
     {
         fileImporter myImporter;
-        myImporter.openFile("GosperGun.txt", &currentGen, &nextGen, &checkGen, &xSize, &ySize, random);
+        myImporter.openFile("test.txt", &currentGen, &nextGen, &checkGen, &xSize, &ySize, random);
     }
     else
     {
@@ -148,25 +148,31 @@ void grid::run(int times)
                 break;
         }
 
-        if(gameRules::checkSimilarities(&checkGen, &currentGen, ySize, xSize))
-        {
-            cout << "The simulation has reached a stable point." << endl;
-            break;
-            // (i%2==0) &&
-        }
-
-        //Evaluate every position
         for (int y = 0; y < ySize; ++y)
         {
             for (int x = 0; x < xSize; ++x)
             {
                 nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
-
-                if(i%2 == 0)
-                    checkGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
             }
         }
 
+        if((i%2==0)&&gameRules::checkSimilarities(&checkGen, &nextGen, ySize, xSize))
+        {
+            cout << "This grid is now stable." << endl;
+            break;
+        }
+
+        //Evaluate every position
+        if(i%2==0)
+        {
+            for (int y = 0; y < ySize; ++y)
+            {
+                for (int x = 0; x < xSize; ++x)
+                {
+                    checkGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
+                }
+            }
+        }
 
         //make the new grid the current one
         addressTemp = nextGen;
