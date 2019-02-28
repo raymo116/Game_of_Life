@@ -83,7 +83,7 @@ grid::grid()
 }
 
 //Takes in size of grid, border mode, view mode, animation on/off
-grid::grid(int border, int view, bool animate, bool random)
+grid::grid(int border, int view, bool animate, bool random, int delayLength)
 {
     if(!random)
     {
@@ -91,24 +91,20 @@ grid::grid(int border, int view, bool animate, bool random)
         myImporter.openFile(&currentGen, &nextGen, &checkGen, &xSize, &ySize, random);
     }
     else
-    {
         fileImporter::generateNew(&currentGen, &nextGen, &checkGen, &xSize, &ySize);
-    }
 
     genNumber = 0;
     mode = border;
     viewMode = view;
     animated = animate;
 
-    waitMs = 100;
+    waitMs = (delayLength>=0)?delayLength:0;
 
     ts.tv_sec = waitMs / DELAY_TIME;
-    ts.tv_nsec = (waitMs % DELAY_TIME) * 1000000;
+    ts.tv_nsec = (waitMs % DELAY_TIME) * pow(DELAY_TIME, 2);
 
     if(view == 2)
-    {
-        outputFile.open("testExport.txt"/*outputFilepath*/);
-    }
+        outputFile.open("mRaymond_cValencia.out");
 }
 
 grid::~grid()
