@@ -75,9 +75,7 @@ grid::grid()
         checkGen[y] = new char[xSize];
 
         for (int x = 0; x < xSize; ++x) {
-            currentGen[y][x] = BLANK;
-            nextGen[y][x] = BLANK;
-            checkGen[y][x] = BLANK;
+            currentGen[y][x] = nextGen[y][x] = checkGen[y][x] = BLANK;
         }
     }
 
@@ -90,7 +88,7 @@ grid::grid(int border, int view, bool animate, bool random)
     if(!random)
     {
         fileImporter myImporter;
-        myImporter.openFile("test.txt", &currentGen, &nextGen, &checkGen, &xSize, &ySize, random);
+        myImporter.openFile(&currentGen, &nextGen, &checkGen, &xSize, &ySize, random);
     }
     else
     {
@@ -148,15 +146,9 @@ void grid::run(int times)
                 break;
         }
 
-        for (int y = 0; y < ySize; ++y)
-        {
-            for (int x = 0; x < xSize; ++x)
-            {
-                nextGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
-            }
-        }
+        copyContents(&currentGen, &nextGen);
 
-        if((i%2==0)&&gameRules::checkSimilarities(&checkGen, &nextGen, ySize, xSize))
+        if((i%2==0)&&(gameRules::checkSimilarities(&checkGen, &nextGen, ySize, xSize) || gameRules::checkSimilarities(&currentGen, &nextGen, ySize, xSize)))
         {
             cout << "This grid is now stable." << endl;
             break;
@@ -164,15 +156,7 @@ void grid::run(int times)
 
         //Evaluate every position
         if(i%2==0)
-        {
-            for (int y = 0; y < ySize; ++y)
-            {
-                for (int x = 0; x < xSize; ++x)
-                {
-                    checkGen[y][x] = gameRules::evaluate(returnSurrounding(x,y), currentGen[y][x]);
-                }
-            }
-        }
+            copyContents(&currentGen, &checkGen);
 
         //make the new grid the current one
         addressTemp = nextGen;
@@ -328,4 +312,15 @@ void grid::mirrorReturn(int y, int x, int* nC)
     y = ((y==-1) || (y==ySize)) ? abs(y)-1 : y;
 
     if(currentGen[y][x] == 'X') (*nC)++;
+}
+
+void grid::copyContents(char*** source, char*** destination)
+{
+    for (int y = 0; y < ySize; ++y)
+    {
+        for (int x = 0; x < xSize; ++x)
+        {
+            (*destination)[y][x] = gameRules::evaluate(returnSurrounding(x,y), (*source)[y][x]);
+        }
+    }
 }
