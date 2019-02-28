@@ -27,3 +27,5 @@
 [Pausing](https://stackoverflow.com/questions/2252372/how-do-you-make-a-program-sleep-in-c-on-win-32)
 
 [Error: free(): invalid next size (fast):](https://stackoverflow.com/questions/4729395/error-free-invalid-next-size-fast)
+
+[Check if File Exists](https://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c)
