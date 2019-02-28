@@ -34,7 +34,7 @@ namespace std {
             // Methods
             grid();
             //Takes in border mode, view mode, animation on/off
-            grid(int border, int view, bool animate, bool random);
+            grid(int border, int view, bool animate, bool random, int delayLength);
             ~grid();
 
             void flipValue(char* currentBool);
