@@ -13,17 +13,20 @@ fileImporter::fileImporter(string fP)
 }
 
 fileImporter::fileImporter()
-{}
-
-void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random)
 {
-    filepath = fP;
+    filepath = "";
+    outpath = "";
+}
 
-    ifstream myStream;
-    myStream.open(filepath);
+void fileImporter::openFile(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random)
+{
+    testPath(&filepath);
 
-    *ySize = parseNum(&myStream);
-    *xSize = parseNum(&myStream);
+    ifstream inStream;
+    inStream.open(filepath);
+
+    *ySize = parseNum(&inStream);
+    *xSize = parseNum(&inStream);
 
     generalInit(currentGen, nextGen, checkGen, xSize, ySize, false);
 
@@ -33,14 +36,14 @@ void fileImporter::openFile(string fP, char*** currentGen, char*** nextGen, char
     {
         for (int x = 0; x < (*xSize); ++x)
         {
-            myStream.get(character);
+            inStream.get(character);
             (*currentGen)[y][x] = (*nextGen)[y][x] = check(character);
             if(character == '\n') x--;
         }
-        myStream.get(character);
+        inStream.get(character);
     }
 
-    myStream.close();
+    inStream.close();
 }
 
 void fileImporter::generateNew(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize)
@@ -128,5 +131,17 @@ void fileImporter::getNumber(int* currentNum, string myParam, bool isInt)
         {
             cout << '\"' << tempString << "\" was not a valid input.\nPlease try again:" << endl;
         }
+    }
+}
+
+void fileImporter::testPath(string* path)
+{
+    cout << "Please enter a filepath:\n";
+    while(true)
+    {
+        getline(cin, (*path));
+        ifstream myStream(*path);
+        if(myStream.good()) break;
+        cout << "That was an invalid filepath. Please try again.";
     }
 }
