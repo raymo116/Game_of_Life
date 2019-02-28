@@ -20,30 +20,40 @@ fileImporter::fileImporter()
 
 void fileImporter::openFile(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random)
 {
-    testPath(&filepath);
-
-    ifstream inStream;
-    inStream.open(filepath);
-
-    *ySize = parseNum(&inStream);
-    *xSize = parseNum(&inStream);
-
-    generalInit(currentGen, nextGen, checkGen, xSize, ySize, false);
-
-    char character;
-
-    for (int y = 0; y < (*ySize); ++y)
+    while(true)
     {
-        for (int x = 0; x < (*xSize); ++x)
+        ifstream inStream;
+        try
         {
-            inStream.get(character);
-            (*currentGen)[y][x] = (*nextGen)[y][x] = check(character);
-            if(character == '\n') x--;
-        }
-        inStream.get(character);
-    }
+            testPath(&filepath);
 
-    inStream.close();
+            inStream.open(filepath);
+
+            *ySize = parseNum(&inStream);
+            *xSize = parseNum(&inStream);
+
+            generalInit(currentGen, nextGen, checkGen, xSize, ySize, false);
+
+            char character;
+
+            for (int y = 0; y < (*ySize); ++y)
+            {
+                for (int x = 0; x < (*xSize); ++x)
+                {
+                    inStream.get(character);
+                    (*currentGen)[y][x] = (*nextGen)[y][x] = check(character);
+                    if(character == '\n') x--;
+                }
+                inStream.get(character);
+            }
+            break;
+        }
+        catch (const invalid_argument)
+        {
+            cout << "It appears like that file is corrupted. Please try another.\n";
+        }
+        inStream.close();
+    }
 }
 
 void fileImporter::generateNew(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize)
@@ -136,7 +146,7 @@ void fileImporter::getNumber(int* currentNum, string myParam, bool isInt)
 
 void fileImporter::testPath(string* path)
 {
-    cout << "Please enter a filepath:\n";
+    cout << "Please enter an import filepath:\n";
     while(true)
     {
         getline(cin, (*path));
