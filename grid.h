@@ -73,6 +73,7 @@ namespace std {
             void mirrorReturn(int x, int y, int* nC);
             ofstream outputFile;
             string outputFilepath;
+            void copyContents(char*** source, char*** destination);
     };
 }
 #endif
