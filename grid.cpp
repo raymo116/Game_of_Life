@@ -11,43 +11,13 @@
 
 using namespace std;
 
-const char CELL = 'X';
-const char BLANK = '-';
-const int DELAY_TIME = 1000;
-
-//for storing the address when switching between grids
-char** addressTemp;
-char** currentGen;
-char** nextGen;
-
-// Variables
-int xSize, ySize;
-
-// 0 = classic
-// 1 = donut
-// 2 = mirror
-int mode;
-
-// 0 = brief pause - user can specify how long
-// 1 = require enter
-// 2 = file output
-int viewMode;
-
-int genNumber;
-
-//wait time in milliseconds
-int waitMs;
-struct timespec ts;
-
 // Methods
 grid::grid(){
     //default is a random grid
     fileImporter::generateNew(&currentGen, &nextGen, &checkGen, &xSize, &ySize);
 
     int delayLength = 100;
-    genNumber = 0;
-    mode = 0;
-    viewMode = 0;
+    genNumber = mode = viewMode = 0;
 
     waitMs = (delayLength>=0)?delayLength:0;
 
@@ -67,14 +37,12 @@ grid::grid(int border, int view, bool random, int delayLength){
     genNumber = 0;
     mode = border;
     viewMode = view;
-
     waitMs = (delayLength>=0)?delayLength:0;
 
     ts.tv_sec = waitMs / DELAY_TIME;
     ts.tv_nsec = (waitMs % DELAY_TIME) * pow(DELAY_TIME, 2);
 
-    if(view == 2)
-        outputFile.open("mRaymond_cValencia.out");
+    if(view == 2) outputFile.open("mRaymond_cValencia.out");
 }
 
 grid::~grid(){
@@ -90,8 +58,7 @@ grid::~grid(){
 
 //will run the game specified ammount of times
 void grid::run(int times){
-    for (int i = 0; i < times; ++i)
-    {
+    for (int i = 0; i < times; ++i){
         switch (viewMode) {
             case 0: //BRIEF PAUSE
                 nanosleep(&ts, NULL);
@@ -99,10 +66,8 @@ void grid::run(int times){
                 break;
             case 1: //ENTER
                 printGrid();
-                //This is the unicode for the opposite of \n
-                cout << "\033[F";
-
-                cout << "Press enter to advance to the next generation." << endl;
+                // \033[F is the unicode for the opposite of \n
+                cout << "\033[FPress enter to advance to the next generation." << endl;
                 cin.get();
                 break;
             case 2: //FILE
@@ -112,26 +77,23 @@ void grid::run(int times){
 
         copyContents(&currentGen, &nextGen);
 
-        if((i%2==0)&&(gameRules::checkSimilarities(&checkGen, &nextGen, ySize, xSize) || gameRules::checkSimilarities(&currentGen, &nextGen, ySize, xSize))){
+        if((i%2==0) && (gameRules::checkSimilarities(&checkGen, &nextGen, ySize, xSize) || gameRules::checkSimilarities(&currentGen, &nextGen, ySize, xSize))){
             cout << "This grid is now stable." << endl;
             break;
         }
 
         //Copy every other grid into the checking spot
-        if(i%2==0)
-            copyContents(&currentGen, &checkGen);
+        if(i%2==0) copyContents(&currentGen, &checkGen);
 
         //make the new grid the current one
         addressTemp = nextGen;
         nextGen = currentGen;
         currentGen = addressTemp;
-
         genNumber++;
     }
 }
 
-void grid::printGrid(){
-    //If printing to the console
+void grid::printGrid(){ // Send to console
     if (viewMode == 0 || viewMode == 1){
         //Dont jump back the first time
         if (genNumber > 0){
@@ -139,24 +101,20 @@ void grid::printGrid(){
                 cout << "\033[F";
             }
         }
-        else{
+        else
             cout << endl;
-        }
     }
 
     cout << "Generation " << genNumber << BLANK_SPACE << endl;
     for (int y = 0; y < ySize; ++y){
         for (int x = 0; x < xSize; ++x){
-            cout << currentGen[y][x];
-
-            //ToDo: this will need to be removed before it gets turned in
-            cout << ' ';
+            cout << currentGen[y][x] << ' ';
         }
         cout << '\n';
     }
 }
 
-void grid::printGrid(ofstream* myStream){
+void grid::printGrid(ofstream* myStream){ // Send to filestream
     (*myStream) << "Generation " << genNumber << BLANK_SPACE << endl;
     for (int y = 0; y < ySize; ++y){
         for (int x = 0; x < xSize; ++x){
@@ -207,35 +165,29 @@ int grid::returnSurrounding(int x, int y){
 
 // Checks to make sure that the rows given are valid and won't go outside of the grid
 void grid::checkRCError(int x, int y){
-    if(((x >= xSize) || (x < 0)) || (y >= ySize) || (y < 0)){
+    if(((x >= xSize) || (x < 0)) || (y >= ySize) || (y < 0))
         throw invalid_argument(("recieved a index outside of the grid: index "+to_string(y)+","+to_string(x)));
-    }
 }
 
 void grid::classicReturn(int y, int x, int* nC){
-    if(!(((x < 0) || (y < 0)) || ((x >= xSize) || (y >= ySize)))){
+    if(!(((x < 0) || (y < 0)) || ((x >= xSize) || (y >= ySize))))
         if(currentGen[y][x] == 'X') (*nC)++;
-    }
 }
 
 void grid::donutReturn(int y, int x, int* nC){
     x = (x+xSize)%xSize;
     y = (y+ySize)%ySize;
-
     if(currentGen[y][x] == 'X') (*nC)++;
 }
 
 void grid::mirrorReturn(int y, int x, int* nC){
     x = ((x==-1) || (x==xSize)) ? abs(x)-1 : x;
     y = ((y==-1) || (y==ySize)) ? abs(y)-1 : y;
-
     if(currentGen[y][x] == 'X') (*nC)++;
 }
 
 void grid::copyContents(char*** source, char*** destination){
-    for (int y = 0; y < ySize; ++y){
-        for (int x = 0; x < xSize; ++x){
+    for (int y = 0; y < ySize; ++y)
+        for (int x = 0; x < xSize; ++x)
             (*destination)[y][x] = gameRules::evaluate(returnSurrounding(x,y), (*source)[y][x]);
-        }
-    }
 }

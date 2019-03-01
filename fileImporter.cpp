@@ -21,7 +21,6 @@ void fileImporter::openFile(char*** currentGen, char*** nextGen, char*** checkGe
         ifstream inStream;
         try{
             testPath(&filepath);
-
             inStream.open(filepath);
 
             *ySize = parseNum(&inStream);
@@ -30,7 +29,6 @@ void fileImporter::openFile(char*** currentGen, char*** nextGen, char*** checkGe
             generalInit(currentGen, nextGen, checkGen, xSize, ySize, false);
 
             char character;
-
             for (int y = 0; y < (*ySize); ++y){
                 for (int x = 0; x < (*xSize); ++x){
                     inStream.get(character);
@@ -52,21 +50,18 @@ void fileImporter::generateNew(char*** currentGen, char*** nextGen, char*** chec
     generalInit(currentGen, nextGen, checkGen, xSize, ySize, true);
 
     int density = 0;
-    getNumber(&density, "between 0 and 1 for the density of the grid", false);
+    getNumber(&density, " float between 0 and 1 for the density of the grid", false);
 
-    for (int y = 0; y < (*ySize); ++y){
-        for (int x = 0; x < (*xSize); ++x){
+    for (int y = 0; y < (*ySize); ++y)
+        for (int x = 0; x < (*xSize); ++x)
             (*currentGen)[y][x] = ((rand()%100)<density)?'X':'-';
-        }
-    }
 }
 
 char fileImporter::check(char character){
     character = toupper(character);
 
-    if((character != '-')&&(character != 'X')&& character != '\n'){
+    if((character != '-')&&(character != 'X')&& character != '\n')
         throw invalid_argument("There was an unacceptable character entered: " + character);
-    }
 }
 
 int fileImporter::parseNum(ifstream* currentStream){
@@ -77,8 +72,8 @@ int fileImporter::parseNum(ifstream* currentStream){
 
 void fileImporter::generalInit(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random){
     if(random){
-        getNumber(xSize, "for the X size", true);
-        getNumber(ySize, "for the Y size", true);
+        getNumber(xSize, "n integer for the X size", true);
+        getNumber(ySize, "n integer for the Y size", true);
     }
 
     *currentGen = new char*[*ySize];
@@ -95,14 +90,13 @@ void fileImporter::generalInit(char*** currentGen, char*** nextGen, char*** chec
 void fileImporter::getNumber(int* currentNum, string myParam, bool isInt){
     bool running = true;
     string tempString = "";
-    cout << "Please enter an integer " << myParam << "."<< endl;
+    cout << "Please enter a" << myParam << "."<< endl;
     while(running){
         try{
             getline(cin, tempString);
-            for (int i = 0; i < tempString.length(); i++){
+            for (int i = 0; i < tempString.length(); i++)
                 if(((tempString[i] > 57) || (tempString[i] < 48)) && (isInt || (!isInt && (tempString[i] != '.'))))
                     throw invalid_argument("");
-            }
 
             (*currentNum) = (isInt) ? stoi(tempString) : round(100*stof(tempString));
 

@@ -24,12 +24,11 @@ char gameRules::evaluate(int neighbors, char currentChar){
 }
 
 bool gameRules::checkSimilarities(char*** a1, char*** a2, int ySize, int xSize){
-    for (int y = 0; y < ySize; ++y){
-        for (int x = 0; x < xSize; ++x){
+    for (int y = 0; y < ySize; ++y)
+        for (int x = 0; x < xSize; ++x)
             if((*a1)[y][x] != (*a2)[y][x])
                 return false;
-        }
-    }
+
     return true;
 }
 

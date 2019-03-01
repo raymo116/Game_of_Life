@@ -14,11 +14,11 @@ namespace std {
         public:
             const char CELL = 'X';
             const char BLANK = '-';
+            const int DELAY_TIME = 1000;
 
             char ** addressTemp;
 
-            // Will switch these grids back and forth via reference,
-            // which is why the names are basically the same
+            // Will switch these grids back and forth via reference, which is why the names are basically the same
             char** currentGen;
             char** nextGen;
             char** checkGen;

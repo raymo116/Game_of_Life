@@ -24,22 +24,20 @@ int main(int argc, char const *argv[]) {
     choiceOutline(&viewMode, &input, 3);
 
     if(viewMode == 0)
-        fileImporter::getNumber(&delayLength, "for the delay time in ms", true);
+        fileImporter::getNumber(&delayLength, "n integer for the delay time in ms", true);
 
     grid myGrid(mode, viewMode, random, delayLength);
-
     myGrid.run(1000);
 
     cout << "Please press enter to exit." << endl;
     cin.get();
-
     return 0;
 }
 
 // There should be only 2 or 3 options
 void choiceOutline(int* param, string* in, int options) {
     // Arbitrary value that will never be used
-    while((*param)==3) {
+    while((*param)==3){
         getline(cin, (*in));
         if((*in) == "0")
             (*param) = 0;
