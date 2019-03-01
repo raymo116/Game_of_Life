@@ -34,9 +34,10 @@ namespace std {
             // Methods
             grid();
             //Takes in border mode, view mode, animation on/off
-            grid(int border, int view, bool random, int delayLength);
+            grid(int border, int view, bool animate, bool random);
             ~grid();
 
+            void flipValue(char* currentBool);
         private:
             // Variables
             int xSize;
@@ -52,12 +53,17 @@ namespace std {
             // 2 = file output
             int viewMode;
 
+            //true will update the console and erase previous
+            //  false will print them one after another
+            bool animated;
+
             const string BLANK_SPACE = "            ";
 
             //wait time in milliseconds
             int waitMs;
             struct timespec ts;
 
+            void testingSetup();
             int returnSurrounding(int row, int column);
 
             void checkRCError(int y, int x);
@@ -67,7 +73,6 @@ namespace std {
             void mirrorReturn(int x, int y, int* nC);
             ofstream outputFile;
             string outputFilepath;
-            void copyContents(char*** source, char*** destination);
     };
 }
 #endif

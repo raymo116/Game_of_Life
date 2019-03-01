@@ -11,7 +11,6 @@ int main(int argc, char const *argv[]) {
     string input = "";
     int mode = 3; // Arbitrary value that won't be used
     int viewMode = 3; // Arbitrary value that won't be used
-    bool animated = true; // Hard coded
     int random = 3; // Arbitrary value that won't be used
     int delayLength = -1;
 
@@ -27,17 +26,20 @@ int main(int argc, char const *argv[]) {
     if(viewMode == 0)
         fileImporter::getNumber(&delayLength, "for the delay time in ms", true);
 
-    grid myGrid(mode, viewMode, animated, random, delayLength);
+    grid myGrid(mode, viewMode, random, delayLength);
 
     myGrid.run(1000);
+
+    cout << "Please press enter to exit." << endl;
+    cin.get();
 
     return 0;
 }
 
-void choiceOutline(int* param, string* in, int options) // There should be only 2 or 3 options
-{
-    while((*param)==3) // Arbitrary value that will never be used
-    {
+// There should be only 2 or 3 options
+void choiceOutline(int* param, string* in, int options) {
+    // Arbitrary value that will never be used
+    while((*param)==3) {
         getline(cin, (*in));
         if((*in) == "0")
             (*param) = 0;

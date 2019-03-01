@@ -7,10 +7,8 @@
 
 using namespace std;
 
-// Should return whether the spot is blank or not
-char gameRules::evaluate(int neighbors, char currentChar)
-{
-
+// Returns whether the cell should live, die, or stay the same
+char gameRules::evaluate(int neighbors, char currentChar){
     // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
     if(neighbors < 2)
         return '-';
@@ -25,12 +23,9 @@ char gameRules::evaluate(int neighbors, char currentChar)
         return '-';
 }
 
-bool gameRules::checkSimilarities(char*** a1, char*** a2, int ySize, int xSize)
-{
-    for (int y = 0; y < ySize; ++y)
-    {
-        for (int x = 0; x < xSize; ++x)
-        {
+bool gameRules::checkSimilarities(char*** a1, char*** a2, int ySize, int xSize){
+    for (int y = 0; y < ySize; ++y){
+        for (int x = 0; x < xSize; ++x){
             if((*a1)[y][x] != (*a2)[y][x])
                 return false;
         }
