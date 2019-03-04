@@ -46,12 +46,24 @@ grid::grid(int border, int view, bool random, int delayLength){
 }
 
 grid::~grid(){
-    if(currentGen)
+    if(currentGen){
+        for(int y=0; y < ySize; ++y)
+            for(int x=0; x < xSize; ++x)
+                delete[] &(currentGen[y][x]);
         delete[] currentGen;
-    if(nextGen)
+    }
+    if(nextGen){
+        for(int y=0; y < ySize; ++y)
+            for(int x=0; x < xSize; ++x)
+                delete[] &(nextGen[y][x]);
         delete[] nextGen;
-    if(checkGen)
+    }
+    if(checkGen){
+        for(int y=0; y < ySize; ++y)
+            for(int x=0; x < xSize; ++x)
+                delete[] &(checkGen[y][x]);
         delete[] checkGen;
+    }
     if(outputFile)
         outputFile.close();
 }
