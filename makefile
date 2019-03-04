@@ -1,2 +1,2 @@
 output: *.cpp
-	g++ *.cpp -o gol.test
+	g++ *.cpp -o mRaymond_cValencia.gol
