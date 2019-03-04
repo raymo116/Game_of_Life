@@ -2,14 +2,14 @@
 
 
 ## Students
-###Matt Raymond
+### Matt Raymond
 
 2270559
 
 raymo116@mail.chapman.edu
 
 
-###Christian Valencia
+### Christian Valencia
 
 `ID`
 
