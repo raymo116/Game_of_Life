@@ -20,7 +20,7 @@ int main(int argc, char const *argv[]) {
     cout << "Choose your game mode:\n0) Classic\n1) Donut\n2) Mirror\n";
     choiceOutline(&mode, &input, 3);
 
-    cout << "Choose your viewing mode:\n0) Breif Pause\n1) [Enter]\n2) File Output\n";
+    cout << "Choose your viewing mode:\n0) Brief Pause\n1) [Enter]\n2) File Output\n";
     choiceOutline(&viewMode, &input, 3);
 
     if(viewMode == 0)
