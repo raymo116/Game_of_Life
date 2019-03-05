@@ -2,29 +2,40 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <fstream>
+#include <unistd.h>
+#include <time.h>
 
 using namespace std;
 
 namespace std {
-    class grid
+    class Grid
     {
         public:
             const char CELL = 'X';
             const char BLANK = '-';
+            const int DELAY_TIME = 1000;
 
-            // Will switch these grids back and forth via reference,
-            // which is why the names are basically the same
-            char** grid1;
-            char** grid2;
+            char ** addressTemp;
 
-            // This grid is the one that will be referenced by methods, so it
-            // always needs to point to the most recent grid
-            char** officialGrid;
-            void printGrid();
+            // Will switch these grids back and forth via reference, which is why the names are basically the same
+            char** currentGen;
+            char** nextGen;
+            char** checkGen;
+
+            int genNumber;
+
+            //will run the game specified ammount of times
+            void Run(int times);
+
+            void PrintGrid();
+            void PrintGrid(ofstream* myStream);
 
             // Methods
-            grid();
-            ~grid();
+            Grid();
+            //Takes in border mode, view mode, animation on/off
+            Grid(int border, int view, bool random, int delayLength);
+            ~Grid();
 
         private:
             // Variables
@@ -36,14 +47,26 @@ namespace std {
             // 2 = mirror
             int mode;
 
-            void testingSetup();
-            int returnSurrounding(int row, int column);
+            // 0 = brief pause - user can specify how long
+            // 1 = require enter
+            // 2 = file output
+            int viewMode;
 
-            void checkRCError(int x, int y);
+            const string BLANK_SPACE = "            ";
 
-            void classicReturn(int x, int y, int* nC);
-            void donutReturn(int x, int y, int* nC);
-            void mirrorReturn(int x, int y, int* nC);
+            //wait time in milliseconds
+            int waitMs;
+            struct timespec ts;
+
+            int ReturnSurrounding(int row, int column);
+
+
+            void ClassicReturn(int x, int y, int* nC);
+            void DonutReturn(int x, int y, int* nC);
+            void MirrorReturn(int x, int y, int* nC);
+            ofstream outputFile;
+            string outputFilepath;
+            void CopyContents(char*** source, char*** destination);
     };
 }
 #endif
