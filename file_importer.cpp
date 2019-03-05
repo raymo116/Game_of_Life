@@ -1,38 +1,47 @@
+#include "file_importer.h"
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <stdexcept>
-#include "file_importer.h"
+
 #include "grid.h"
 
 using namespace std;
 
-FileImporter::FileImporter(string fP){
-    filepath = fP;
-}
-
 FileImporter::FileImporter(){
-    filepath = "";
-    outpath = "";
+    filepath_ = "";
+    outpath_ = "";
 }
 
-void FileImporter::OpenFile(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random){
+FileImporter::FileImporter(string filepath){
+    filepath_ = filepath;
+}
+
+//Create a grid from a file
+void FileImporter::OpenFile(char*** currentgen, char*** nextgen, char*** checkgen, int* xsize, int* ysize, bool random){
     while(true){
+        //Create a new stream
         ifstream inStream;
         try{
-            TestPath(&filepath);
-            inStream.open(filepath);
+            //Test and open file
+            TestPath(&filepath_);
+            inStream.open(filepath_);
 
-            *ySize = ParseNum(&inStream);
-            *xSize = ParseNum(&inStream);
+            //Get size of grid from file
+            *ysize = ParseNum(&inStream);
+            *xsize = ParseNum(&inStream);
 
-            GeneralInit(currentGen, nextGen, checkGen, xSize, ySize, false);
+            //Initialize grids
+            GeneralInit(currentgen, nextgen, checkgen, xsize, ysize, false);
 
+            //Read characters into grid
             char character;
-            for (int y = 0; y < (*ySize); ++y){
-                for (int x = 0; x < (*xSize); ++x){
+            for (int y = 0; y < (*ysize); ++y){
+                for (int x = 0; x < (*xsize); ++x){
                     inStream.get(character);
-                    (*currentGen)[y][x] = (*nextGen)[y][x] = Check(character);
+                    //Use the check function for inline error checking
+                    (*currentgen)[y][x] = (*nextgen)[y][x] = Check(character);
                     if(character == '\n') x--;
                 }
                 inStream.get(character);
@@ -46,71 +55,76 @@ void FileImporter::OpenFile(char*** currentGen, char*** nextGen, char*** checkGe
     }
 }
 
-void FileImporter::GenerateNew(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize){
-    GeneralInit(currentGen, nextGen, checkGen, xSize, ySize, true);
+//Create a random grid
+void FileImporter::GenerateNew(char*** currentgen, char*** nextgen, char*** checkgen, int* xsize, int* ysize){
+    GeneralInit(currentgen, nextgen, checkgen, xsize, ysize, true);
 
     int density = 0;
     GetNumber(&density, " float between 0 and 1 for the density of the grid", false);
 
-    for (int y = 0; y < (*ySize); ++y)
-        for (int x = 0; x < (*xSize); ++x)
-            (*currentGen)[y][x] = ((rand()%100)<density)?'X':'-';
+    for (int y = 0; y < (*ysize); ++y)
+        for (int x = 0; x < (*xsize); ++x)
+            (*currentgen)[y][x] = ((rand() % 100) < density) ? 'X' : '-';
 }
 
+//Error checking for characters read from file
 char FileImporter::Check(char character){
     character = toupper(character);
 
-    if((character != '-')&&(character != 'X')&& character != '\n')
+    if((character != '-') && (character != 'X') && character != '\n')
         throw invalid_argument("There was an unacceptable character entered: " + character);
 }
 
 int FileImporter::ParseNum(ifstream* currentStream){
-    string numString;
-    getline(*currentStream, numString);
-    return stoi(numString);
+    string numstring;
+    getline(*currentStream, numstring);
+    return stoi(numstring);
 }
 
-void FileImporter::GeneralInit(char*** currentGen, char*** nextGen, char*** checkGen, int* xSize, int* ySize, bool random){
+//Initialize grids
+void FileImporter::GeneralInit(char*** currentgen, char*** nextgen, char*** checkgen, int* xsize, int* ysize, bool random){
     if(random){
-        GetNumber(xSize, "n integer for the X size", true);
-        GetNumber(ySize, "n integer for the Y size", true);
+        GetNumber(xsize, "n integer for the X size", true);
+        GetNumber(ysize, "n integer for the Y size", true);
     }
 
-    *currentGen = new char*[*ySize];
-    *nextGen = new char*[*ySize];
-    *checkGen = new char*[*ySize];
+    *currentgen = new char*[*ysize];
+    *nextgen = new char*[*ysize];
+    *checkgen = new char*[*ysize];
 
-    for (int y = 0; y < (*ySize); ++y){
-        (*currentGen)[y] = new char[*xSize];
-        (*nextGen)[y] = new char[*xSize];
-        (*checkGen)[y] = new char[*xSize];
+    for (int y = 0; y < (*ysize); ++y){
+        (*currentgen)[y] = new char[*xsize];
+        (*nextgen)[y] = new char[*xsize];
+        (*checkgen)[y] = new char[*xsize];
     }
 }
 
-void FileImporter::GetNumber(int* currentNum, string myParam, bool isInt){
+//Function for getting user inputed numbers
+void FileImporter::GetNumber(int* currentnum, string myparam, bool isint){
     bool running = true;
-    string tempString = "";
-    cout << "Please enter a" << myParam << "."<< endl;
+    string tempstring = "";
+    cout << "Please enter a" << myparam << "."<< endl;
     while(running){
         try{
-            getline(cin, tempString);
-            for (int i = 0; i < tempString.length(); i++)
-                if(((tempString[i] > 57) || (tempString[i] < 48)) && (isInt || (!isInt && (tempString[i] != '.'))))
+            getline(cin, tempstring);
+            for (int i = 0; i < tempstring.length(); i++)
+                if(((tempstring[i] > 57) || (tempstring[i] < 48)) && (isint || (!isint && (tempstring[i] != '.'))))
                     throw invalid_argument("");
 
-            (*currentNum) = (isInt) ? stoi(tempString) : round(100*stof(tempString));
+            (*currentnum) = (isint) ? stoi(tempstring) : round(100 * stof(tempstring));
 
-            if((!isInt)&&((*currentNum >= 100) || (*currentNum == 0)))
+            if((!isint)&&((*currentnum >= 100) || (*currentnum == 0)))
                 throw invalid_argument("");
 
-            running=false;
+            running = false;
         }
         catch (const invalid_argument){
-            cout << '\"' << tempString << "\" was not a valid input.\nPlease try again:" << endl;
+            cout << '\"' << tempstring << "\" was not a valid input.\nPlease try again:" << endl;
         }
     }
 }
 
+//Simple function for error checking a filepath
 void FileImporter::TestPath(string* path){
     cout << "Please enter an import filepath:\n";
     while(true){

@@ -9,7 +9,7 @@ namespace std {
     class GameRules
     {
     public:
-        static char Evaluate(int neighbors, char currentChar);
+        static char Evaluate(int neighbors, char current);
         static bool CheckSimilarities(char*** a1, char*** a2, int y, int x);
     private:
     };

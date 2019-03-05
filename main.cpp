@@ -10,9 +10,9 @@ void ChoiceOutline(int* param, string* in, int options);
 int main(int argc, char const *argv[]) {
     string input = "";
     int mode = 3; // Arbitrary value that won't be used
-    int viewMode = 3; // Arbitrary value that won't be used
+    int viewmode = 3; // Arbitrary value that won't be used
     int random = 3; // Arbitrary value that won't be used
-    int delayLength = -1;
+    int delaylength = -1;
 
     cout << "Choose your map style:\n0) Map\n1) Random:\n";
     ChoiceOutline(&random, &input, 2);
@@ -21,12 +21,12 @@ int main(int argc, char const *argv[]) {
     ChoiceOutline(&mode, &input, 3);
 
     cout << "Choose your viewing mode:\n0) Brief Pause\n1) [Enter]\n2) File Output\n";
-    ChoiceOutline(&viewMode, &input, 3);
+    ChoiceOutline(&viewmode, &input, 3);
 
-    if(viewMode == 0)
-        FileImporter::GetNumber(&delayLength, "n integer for the delay time in ms", true);
+    if(viewmode == 0)
+        FileImporter::GetNumber(&delaylength, "n integer for the delay time in ms", true);
 
-    Grid myGrid(mode, viewMode, random, delayLength);
+    Grid myGrid(mode, viewmode, random, delaylength);
     myGrid.Run(1000);
 
     cout << "Please press enter to exit." << endl;
@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]) {
 // There should be only 2 or 3 options
 void ChoiceOutline(int* param, string* in, int options) {
     // Arbitrary value that will never be used
-    while((*param)==3){
+    while((*param) == 3){
         getline(cin, (*in));
         if((*in) == "0")
             (*param) = 0;
