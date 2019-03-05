@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
 #include "grid.h"
-#include "fileImporter.h"
+#include "file_importer.h"
 
 using namespace std;
 
-void choiceOutline(int* param, string* in, int options);
+void ChoiceOutline(int* param, string* in, int options);
 
 int main(int argc, char const *argv[]) {
     string input = "";
@@ -15,19 +15,19 @@ int main(int argc, char const *argv[]) {
     int delayLength = -1;
 
     cout << "Choose your map style:\n0) Map\n1) Random:\n";
-    choiceOutline(&random, &input, 2);
+    ChoiceOutline(&random, &input, 2);
 
     cout << "Choose your game mode:\n0) Classic\n1) Donut\n2) Mirror\n";
-    choiceOutline(&mode, &input, 3);
+    ChoiceOutline(&mode, &input, 3);
 
     cout << "Choose your viewing mode:\n0) Brief Pause\n1) [Enter]\n2) File Output\n";
-    choiceOutline(&viewMode, &input, 3);
+    ChoiceOutline(&viewMode, &input, 3);
 
     if(viewMode == 0)
-        fileImporter::getNumber(&delayLength, "n integer for the delay time in ms", true);
+        FileImporter::GetNumber(&delayLength, "n integer for the delay time in ms", true);
 
-    grid myGrid(mode, viewMode, random, delayLength);
-    myGrid.run(1000);
+    Grid myGrid(mode, viewMode, random, delayLength);
+    myGrid.Run(1000);
 
     cout << "Please press enter to exit." << endl;
     cin.get();
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[]) {
 }
 
 // There should be only 2 or 3 options
-void choiceOutline(int* param, string* in, int options) {
+void ChoiceOutline(int* param, string* in, int options) {
     // Arbitrary value that will never be used
     while((*param)==3){
         getline(cin, (*in));

@@ -9,7 +9,7 @@
 using namespace std;
 
 namespace std {
-    class grid
+    class Grid
     {
         public:
             const char CELL = 'X';
@@ -26,16 +26,16 @@ namespace std {
             int genNumber;
 
             //will run the game specified ammount of times
-            void run(int times);
+            void Run(int times);
 
-            void printGrid();
-            void printGrid(ofstream* myStream);
+            void PrintGrid();
+            void PrintGrid(ofstream* myStream);
 
             // Methods
-            grid();
+            Grid();
             //Takes in border mode, view mode, animation on/off
-            grid(int border, int view, bool random, int delayLength);
-            ~grid();
+            Grid(int border, int view, bool random, int delayLength);
+            ~Grid();
 
         private:
             // Variables
@@ -58,16 +58,16 @@ namespace std {
             int waitMs;
             struct timespec ts;
 
-            int returnSurrounding(int row, int column);
+            int ReturnSurrounding(int row, int column);
 
-            void checkRCError(int y, int x);
+            void CheckRCError(int y, int x);
 
-            void classicReturn(int x, int y, int* nC);
-            void donutReturn(int x, int y, int* nC);
-            void mirrorReturn(int x, int y, int* nC);
+            void ClassicReturn(int x, int y, int* nC);
+            void DonutReturn(int x, int y, int* nC);
+            void MirrorReturn(int x, int y, int* nC);
             ofstream outputFile;
             string outputFilepath;
-            void copyContents(char*** source, char*** destination);
+            void CopyContents(char*** source, char*** destination);
     };
 }
 #endif
