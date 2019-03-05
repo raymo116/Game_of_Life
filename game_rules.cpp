@@ -9,6 +9,7 @@
 using namespace std;
 
 // Returns whether the cell should live, die, or stay the same
+// Takes in a number of neighbors and the character of the current cell
 char GameRules::Evaluate(int neighbors, char current){
     // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
     if(neighbors < 2)
@@ -24,6 +25,8 @@ char GameRules::Evaluate(int neighbors, char current){
         return '-';
 }
 
+// Checks two grids to see if they're the same or not
+// Takes in pointers to two grids, and the y and x sizes of the grid
 bool GameRules::CheckSimilarities(char*** a1, char*** a2, int ySize, int xSize){
     //For every x and y position
     for (int y = 0; y < ySize; ++y)
